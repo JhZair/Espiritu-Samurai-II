@@ -22,11 +22,11 @@ public:
     }
 };
 
-class Piso {
+class Floor {
 public:
     sf::RectangleShape rectan;
 
-    Piso(float x, float y) {
+    Floor(float x, float y) {
         rectan.setSize(sf::Vector2f(800.0f, 50.0f));
         rectan.setPosition(x, y); 
         rectan.setFillColor(sf::Color::Green); 
@@ -37,7 +37,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Peleitas");
 
     Jugador jugador1(375.0f, 450.0f);
-    Piso piso(0.0f, 550.0f);
+    Floor piso(0.0f, 550.0f);
 
     sf::Clock reloj;
     float tiempoDelta = 0.0f;
