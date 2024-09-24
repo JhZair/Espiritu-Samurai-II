@@ -12,11 +12,11 @@ public:
         velocidad = 200.0f; 
     }
 
-    void move(float tiempoDelta, sf::Keyboard::Key leftKey, sf::Keyboard::Key rightKey) {
-        if (sf::Keyboard::isKeyPressed(leftKey)) {
+    void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha) {
+        if (sf::Keyboard::isKeyPressed(izquierda)) {
             rectan.move(-velocidad * tiempoDelta, 0.0f); 
         }
-        if (sf::Keyboard::isKeyPressed(rightKey)) {
+        if (sf::Keyboard::isKeyPressed(derecha)) {
             rectan.move(velocidad * tiempoDelta, 0.0f); 
         }
     }
