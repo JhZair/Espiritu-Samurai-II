@@ -13,10 +13,10 @@ public:
     }
 
     void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha) {
-        if (sf::Keyboard::isKeyPressed(izquierda)) {
+        if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0) {
             rectan.move(-velocidad * tiempoDelta, 0.0f);
         }
-        if (sf::Keyboard::isKeyPressed(derecha)) {
+        if (sf::Keyboard::isKeyPressed(derecha) && rectan.getPosition().x < 750) {
             rectan.move(velocidad * tiempoDelta, 0.0f);
         }
     }
@@ -60,12 +60,6 @@ int main() {
         jugador1.move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right);
         jugador2.move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D);
 
-        if(jugador1.getPosicion().x>799){
-            jugador1.rectan.move(-300, 0.0f);
-        }
-        if (jugador2.getPosicion().x < 0) {
-            jugador2.rectan.move(300, 0.0f);
-        }
       
         window.clear(sf::Color::Blue);
 
@@ -78,3 +72,4 @@ int main() {
     return 0;
 }
 
+//g++ -o juego main.cpp -lsfml-graphics -lsfml-window -lsfml-system
