@@ -1,1 +1,4 @@
 ejecutables/
+main.o 
+sfml-app
+.vscode/
