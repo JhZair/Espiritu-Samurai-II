@@ -4,9 +4,9 @@ class Jugador {
 public:
     sf::RectangleShape rectan;
     float velocidad;
-    float gravity = 20.5f;
+    float gravity = 1100.5f;
     float velocityY = 0;
-    float jumpStrength = -80.0f; 
+    float jumpStrength = -480.0f; 
     bool isJumping = false; 
 
     Jugador(float x, float y, sf::Color color) {
