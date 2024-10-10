@@ -9,3 +9,5 @@
 6. g++ --version
 3. g++ -o programa main.cpp -lsfml-graphics -lsfml-window -lsfml-system
 
+#https://www.youtube.com/playlist?list=PL21OsoBLPpMOO6zyVlxZ4S4hwkY_SLRW9
+#https://www.youtube.com/watch?v=4fcTqmT0Hhg
