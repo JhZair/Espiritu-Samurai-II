@@ -32,7 +32,7 @@ public:
     float velocityY = 0;
     float jumpStrength = -480.0f; 
     bool isJumping = false;
-    std::vector<Cuchillo> cuchillos; // Vector para almacenar los cuchillos
+    std::vector<Cuchillo> cuchillos; 
 
     Jugador(float x, float y, sf::Color color) {
         rectan.setSize(sf::Vector2f(50.0f, 100.0f));
@@ -88,7 +88,6 @@ public:
     Hanzo(float x, float y, sf::Color color) : Jugador(x, y, color) {}
 
     void lanzarCuchillo() override {
-        // Lanzar dos cuchillos en diferentes posiciones de altura
         Cuchillo cuchillo1(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 3);
         Cuchillo cuchillo2(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + 2 * rectan.getSize().y / 3);
         cuchillos.push_back(cuchillo1);
@@ -98,7 +97,6 @@ public:
 
 class Samurai : public Jugador {
 private:
-    bool canDoubleJump = true; // Controla si se permite un doble salto
     int remainingJumps = 45;
 
 public:
@@ -112,12 +110,10 @@ public:
             rectan.move(velocidad * tiempoDelta, 0.0f);
         }
 
-        // Aplicar gravedad cuando está en el aire
         if (isJumping) {
             velocityY += gravity * tiempoDelta;
         }
 
-        // Lógica de salto y doble salto
         if (sf::Keyboard::isKeyPressed(up) && remainingJumps > 0) {
                 isJumping = true;
                 velocityY = jumpStrength;
@@ -132,7 +128,6 @@ public:
             rectan.setPosition(rectan.getPosition().x, pisoY - rectan.getSize().y);
             velocityY = 0;
             isJumping = false;
-            canDoubleJump = true;  // Restablecer el doble salto al tocar el piso
             remainingJumps = 45;
         }
     }
@@ -182,7 +177,7 @@ private:
                 window.close();
             }
             if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::O) {
+                if (event.key.code == sf::Keyboard::Q) {
                     jugador1.lanzarCuchillo();
                 }
                 if (event.key.code == sf::Keyboard::P) {
