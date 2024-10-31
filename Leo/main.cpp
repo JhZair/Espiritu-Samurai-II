@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <iostream> 
 
 class Cuchillo {
 public:
@@ -30,6 +31,7 @@ public:
     float jumpStrength = -480.0f; 
     bool isJumping = false;
     float maxhealth = 700;
+    float health = maxhealth; 
     int vidas = 2;
 
     std::vector<Cuchillo> cuchillos; 
@@ -80,6 +82,27 @@ public:
             std::remove_if(cuchillos.begin(), cuchillos.end(), [](Cuchillo& cuchillo) { return cuchillo.getPosicion().x > 800; }),
             cuchillos.end()
         );
+    }
+
+    // crear funcion para mostrar barra de salud 
+    void drawHealthBar(sf::RenderWindow& window, sf::Vector2f position) 
+    {
+        int anchoBarraMax = 200;
+        int altoBarra = 30;
+        float anchoBarraActual = (static_cast<float>(health) / maxhealth) * anchoBarraMax;
+
+        sf::RectangleShape barraTotal(sf::Vector2f(anchoBarraMax, altoBarra));
+        barraTotal.setPosition(position);
+        barraTotal.setFillColor(sf::Color(100, 100, 100));
+        barraTotal.setOutlineColor(sf::Color::White);
+        barraTotal.setOutlineThickness(2);
+
+        sf::RectangleShape barraSalud(sf::Vector2f(anchoBarraActual, altoBarra));
+        barraSalud.setPosition(position);
+        barraSalud.setFillColor(sf::Color::Green);      
+
+        window.draw(barraTotal); 
+        window.draw(barraSalud);
     }
 };
 
@@ -202,6 +225,9 @@ private:
         window.draw(piso.rectan);
         window.draw(jugador1.rectan);
         window.draw(jugador2.rectan);
+
+        jugador1.drawHealthBar(window, sf::Vector2f(175.0f, 50.0f)); // Cambié la posición para asegurarnos que esté visible
+        jugador2.drawHealthBar(window, sf::Vector2f(375.0f, 50.0f));
 
         for (auto& cuchillo : jugador1.cuchillos) {
             window.draw(cuchillo.forma);
