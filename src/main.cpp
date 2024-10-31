@@ -1,9 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#include <SFML/Graphics.hpp>
-#include <vector>
-
 class Cuchillo {
 public:
     sf::RectangleShape forma;
