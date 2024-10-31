@@ -98,60 +98,83 @@ public:
     }
 };
 
-int main() {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Peleitas");
-
-    Jugador jugador1(375.0f, 450.0f, sf::Color::Red);
-    Jugador jugador2(175.0f, 450.0f, sf::Color::Blue); // Segundo jugador
-    Piso piso(0.0f, 550.0f);
-
+class Juego {
+private:
+    sf::RenderWindow window;
+    Jugador jugador1;
+    Jugador jugador2;
+    Piso piso;
     sf::Clock reloj;
-    float tiempoDelta = 0.0f;
+    float tiempoDelta;
 
-    while (window.isOpen()) {
-        tiempoDelta = reloj.restart().asSeconds();
+public:
+    // Constructor para inicializar el juego
+    Juego()
+        : window(sf::VideoMode(800, 600), "Peleitas"),
+          jugador1(375.0f, 450.0f, sf::Color::Red),
+          jugador2(175.0f, 450.0f, sf::Color::Blue),
+          piso(0.0f, 550.0f),
+          tiempoDelta(0.0f) {}
 
+    // Método principal para ejecutar el juego
+    void ejecutar() {
+        while (window.isOpen()) {
+            procesarEventos();
+            actualizar();
+            renderizar();
+        }
+    }
+
+private:
+    void procesarEventos() {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-            // Detectar cuando se presiona "O" para lanzar un cuchillo con jugador1
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::O) {
                     jugador1.lanzarCuchillo();
                 }
-                // Detectar cuando se presiona "P" para lanzar un cuchillo con jugador2
                 if (event.key.code == sf::Keyboard::P) {
                     jugador2.lanzarCuchillo();
                 }
             }
         }
+    }
 
-        // Mover y actualizar cuchillos de ambos jugadores
+    // Actualiza el estado del juego
+    void actualizar() {
+        tiempoDelta = reloj.restart().asSeconds();
         jugador1.move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
         jugador2.move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y);
 
         jugador1.actualizarCuchillos(tiempoDelta);
         jugador2.actualizarCuchillos(tiempoDelta);
+    }
 
-        window.clear(sf::Color::Black); // Fondo negro
-
+    // Renderiza todos los elementos en la ventana
+    void renderizar() {
+        window.clear(sf::Color::Black);
         window.draw(piso.rectan);
         window.draw(jugador1.rectan);
         window.draw(jugador2.rectan);
 
-        // Dibujar todos los cuchillos de jugador1
         for (auto& cuchillo : jugador1.cuchillos) {
             window.draw(cuchillo.forma);
         }
-        // Dibujar todos los cuchillos de jugador2
         for (auto& cuchillo : jugador2.cuchillos) {
             window.draw(cuchillo.forma);
         }
 
         window.display();
     }
+};
+
+// El nuevo main para iniciar el juego
+int main() {
+    Juego juego;
+    juego.ejecutar();
 
     return 0;
 }
