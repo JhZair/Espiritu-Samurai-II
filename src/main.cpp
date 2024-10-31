@@ -108,7 +108,6 @@ private:
     float tiempoDelta;
 
 public:
-    // Constructor para inicializar el juego
     Juego()
         : window(sf::VideoMode(800, 600), "Peleitas"),
           jugador1(375.0f, 450.0f, sf::Color::Red),
@@ -116,7 +115,6 @@ public:
           piso(0.0f, 550.0f),
           tiempoDelta(0.0f) {}
 
-    // Método principal para ejecutar el juego
     void ejecutar() {
         while (window.isOpen()) {
             procesarEventos();
@@ -143,7 +141,6 @@ private:
         }
     }
 
-    // Actualiza el estado del juego
     void actualizar() {
         tiempoDelta = reloj.restart().asSeconds();
         jugador1.move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
@@ -153,7 +150,6 @@ private:
         jugador2.actualizarCuchillos(tiempoDelta);
     }
 
-    // Renderiza todos los elementos en la ventana
     void renderizar() {
         window.clear(sf::Color::Black);
         window.draw(piso.rectan);
@@ -171,7 +167,6 @@ private:
     }
 };
 
-// El nuevo main para iniciar el juego
 int main() {
     Juego juego;
     juego.ejecutar();
