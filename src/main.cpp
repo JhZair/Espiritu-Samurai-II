@@ -1,6 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+#include <SFML/Graphics.hpp>
+#include <vector>
+
 class Cuchillo {
 public:
     sf::RectangleShape forma;
@@ -38,7 +41,12 @@ public:
         velocidad = 200.0f;
     }
 
-    void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY) {
+    virtual void lanzarCuchillo() {
+        Cuchillo cuchillo(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
+        cuchillos.push_back(cuchillo);
+    }
+
+    virtual void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY) {
         if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0) {
             rectan.move(-velocidad * tiempoDelta, 0.0f);
         }
@@ -63,27 +71,70 @@ public:
         }
     }
 
-    void lanzarCuchillo() {
-        // Crea un nuevo cuchillo en la posición actual del jugador
-        Cuchillo cuchillo(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
-        cuchillos.push_back(cuchillo);
-    }
-
     void actualizarCuchillos(float tiempoDelta) {
-        // Mover cada cuchillo y eliminar los que salen de la ventana
         for (auto& cuchillo : cuchillos) {
             cuchillo.mover(tiempoDelta);
         }
         
-        // Eliminar cuchillos que salgan de la pantalla
         cuchillos.erase(
             std::remove_if(cuchillos.begin(), cuchillos.end(), [](Cuchillo& cuchillo) { return cuchillo.getPosicion().x > 800; }),
             cuchillos.end()
         );
     }
+};
 
-    sf::Vector2f getPosicion() {
-        return rectan.getPosition();
+class Hanzo : public Jugador {
+public:
+    Hanzo(float x, float y, sf::Color color) : Jugador(x, y, color) {}
+
+    void lanzarCuchillo() override {
+        // Lanzar dos cuchillos en diferentes posiciones de altura
+        Cuchillo cuchillo1(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 3);
+        Cuchillo cuchillo2(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + 2 * rectan.getSize().y / 3);
+        cuchillos.push_back(cuchillo1);
+        cuchillos.push_back(cuchillo2);
+    }
+};
+
+class Samurai : public Jugador {
+private:
+    bool canDoubleJump = true; // Controla si se permite un doble salto
+    int remainingJumps = 45;
+
+public:
+    Samurai(float x, float y, sf::Color color) : Jugador(x, y, color) {}
+
+    void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY) override {
+        if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0) {
+            rectan.move(-velocidad * tiempoDelta, 0.0f);
+        }
+        if (sf::Keyboard::isKeyPressed(derecha) && rectan.getPosition().x < 750) {
+            rectan.move(velocidad * tiempoDelta, 0.0f);
+        }
+
+        // Aplicar gravedad cuando está en el aire
+        if (isJumping) {
+            velocityY += gravity * tiempoDelta;
+        }
+
+        // Lógica de salto y doble salto
+        if (sf::Keyboard::isKeyPressed(up) && remainingJumps > 0) {
+                isJumping = true;
+                velocityY = jumpStrength;
+                remainingJumps--;
+
+        }
+
+        rectan.move(0.0f, velocityY * tiempoDelta);
+
+        // Comprobar colisión con el piso
+        if (rectan.getPosition().y + rectan.getSize().y >= pisoY) {
+            rectan.setPosition(rectan.getPosition().x, pisoY - rectan.getSize().y);
+            velocityY = 0;
+            isJumping = false;
+            canDoubleJump = true;  // Restablecer el doble salto al tocar el piso
+            remainingJumps = 45;
+        }
     }
 };
 
@@ -101,8 +152,8 @@ public:
 class Juego {
 private:
     sf::RenderWindow window;
-    Jugador jugador1;
-    Jugador jugador2;
+    Hanzo jugador1;
+    Samurai jugador2;
     Piso piso;
     sf::Clock reloj;
     float tiempoDelta;
@@ -110,8 +161,8 @@ private:
 public:
     Juego()
         : window(sf::VideoMode(800, 600), "Peleitas"),
-          jugador1(375.0f, 450.0f, sf::Color::Red),
-          jugador2(175.0f, 450.0f, sf::Color::Blue),
+          jugador1(175.0f, 450.0f, sf::Color::Blue),
+          jugador2(375.0f, 450.0f, sf::Color::Red),
           piso(0.0f, 550.0f),
           tiempoDelta(0.0f) {}
 
@@ -143,8 +194,9 @@ private:
 
     void actualizar() {
         tiempoDelta = reloj.restart().asSeconds();
-        jugador1.move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
-        jugador2.move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y);
+        jugador1.move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y);
+        jugador2.move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
+
 
         jugador1.actualizarCuchillos(tiempoDelta);
         jugador2.actualizarCuchillos(tiempoDelta);
