@@ -185,8 +185,8 @@ public:
 class Juego {
 private:
     sf::RenderWindow window;
-    Hanzo jugador1;
-    Samurai jugador2;
+    Luchador* jugador1;
+    Luchador* jugador2;
     Piso piso;
     sf::Clock reloj;
     float tiempoDelta;
@@ -194,10 +194,16 @@ private:
 public:
     Juego()
         : window(sf::VideoMode(800, 600), "Peleitas"),
-          jugador1(175.0f, 450.0f, sf::Color::Yellow),
-          jugador2(375.0f, 450.0f, sf::Color::Red),
           piso(0.0f, 550.0f),
-          tiempoDelta(0.0f) {}
+          tiempoDelta(0.0f) {
+          jugador1 = new Hanzo(175.0f, 450.0f, sf::Color::Yellow);
+          jugador2 = new Samurai(375.0f, 450.0f, sf::Color::Red);
+    }
+
+    ~Juego() {
+        delete jugador1;
+        delete jugador2;
+    }
 
     void ejecutar() {
         while (window.isOpen()) {
@@ -216,25 +222,25 @@ private:
             }
 
             if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::R && jugador1.hitbox.getGlobalBounds().intersects(jugador2.rectan.getGlobalBounds())) {
-                    jugador2.recibirAtaque(20.0f);
-                    if(!jugador2.lives){
+                if (event.key.code == sf::Keyboard::R && jugador1->hitbox.getGlobalBounds().intersects(jugador2->rectan.getGlobalBounds())) {
+                    jugador2->recibirAtaque(20.0f);
+                    if (jugador2->lives == 0) {
+                        std::cout << "Jugador 1 gana!" << std::endl;
                         window.close();
-                        std::cout << "Jugador 1 gana!"<<std::endl;
                     }
                 }
-                if (event.key.code == sf::Keyboard::P && jugador2.hitbox.getGlobalBounds().intersects(jugador1.rectan.getGlobalBounds())) {
-                    jugador1.recibirAtaque(20.0f);
-                    if(!jugador1.lives){
-                        std::cout << "Jugador 2 gana!"<<std::endl;
+                if (event.key.code == sf::Keyboard::P && jugador2->hitbox.getGlobalBounds().intersects(jugador1->rectan.getGlobalBounds())) {
+                    jugador1->recibirAtaque(20.0f);
+                    if (jugador1->lives == 0) {
+                        std::cout << "Jugador 2 gana!" << std::endl;
                         window.close();
                     }
                 }
                 if (event.key.code == sf::Keyboard::Q) {
-                    jugador1.lanzarCuchillo();
+                    jugador1->lanzarCuchillo();
                 }
                 if (event.key.code == sf::Keyboard::O) {
-                    jugador2.lanzarCuchillo();
+                    jugador2->lanzarCuchillo();
                 }
             }
         }
@@ -242,29 +248,29 @@ private:
 
     void actualizar() {
         tiempoDelta = reloj.restart().asSeconds();
-        jugador1.move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y);
-        jugador2.move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
+        jugador1->move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y);
+        jugador2->move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
 
-        jugador1.actualizarCuchillos(tiempoDelta);
-        jugador2.actualizarCuchillos(tiempoDelta);
+        jugador1->actualizarCuchillos(tiempoDelta);
+        jugador2->actualizarCuchillos(tiempoDelta);
     }
 
     void renderizar() {
         window.clear(sf::Color::Blue);
         window.draw(piso.rectan);
-        window.draw(jugador1.rectan);
-        window.draw(jugador2.rectan);
+        window.draw(jugador1->rectan);
+        window.draw(jugador2->rectan);
 
-        window.draw(jugador1.hitbox);
-        window.draw(jugador2.hitbox);
+        window.draw(jugador1->hitbox);
+        window.draw(jugador2->hitbox);
 
-        jugador1.drawHealthBar(window, sf::Vector2f(25.0f, 50.0f));
-        jugador2.drawHealthBar(window, sf::Vector2f(575.0f, 50.0f));
+        jugador1->drawHealthBar(window, sf::Vector2f(25.0f, 50.0f));
+        jugador2->drawHealthBar(window, sf::Vector2f(575.0f, 50.0f));
 
-        for (auto& cuchillo : jugador1.cuchillos) {
+        for (auto& cuchillo : jugador1->cuchillos) {
             window.draw(cuchillo.forma);
         }
-        for (auto& cuchillo : jugador2.cuchillos) {
+        for (auto& cuchillo : jugador2->cuchillos) {
             window.draw(cuchillo.forma);
         }
 

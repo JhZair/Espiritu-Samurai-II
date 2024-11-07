@@ -55,7 +55,6 @@ public:
         if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0) {
             rectan.move(-velocidad * tiempoDelta, 0.0f);
             facingLeft=true;
-            rectan.setScale(-1.0f,1.0f);
             rectan.setPosition(rectan.getPosition().x , rectan.getPosition().y);
         }
         if (sf::Keyboard::isKeyPressed(derecha) && rectan.getPosition().x < 750) {
