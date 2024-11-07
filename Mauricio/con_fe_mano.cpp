@@ -1,3 +1,8 @@
+//John Zair Oros Perez
+//Leonardo André Loayza Paucar
+//Mauricio Jerson Payehuanca Diaz
+//Sebastian Fabian Flores Pro
+
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream> 
