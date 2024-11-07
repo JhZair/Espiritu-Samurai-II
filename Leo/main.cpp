@@ -22,7 +22,7 @@ public:
     }
 };
 
-class Jugador {
+class Luchador {
 public:
     sf::RectangleShape rectan;
     float velocidad;
@@ -30,13 +30,13 @@ public:
     float velocityY = 0;
     float jumpStrength = -480.0f; 
     bool isJumping = false;
-    float maxhealth = 700;
+    float maxhealth = 200;
     float health = maxhealth; 
-    int vidas = 2;
+    int lives = 2;
 
     std::vector<Cuchillo> cuchillos; 
 
-    Jugador(float x, float y, sf::Color color) {
+    Luchador(float x, float y, sf::Color color) {
         rectan.setSize(sf::Vector2f(50.0f, 100.0f));
         rectan.setPosition(x, y);
         rectan.setFillColor(color);
@@ -106,9 +106,9 @@ public:
     }
 };
 
-class Hanzo : public Jugador {
+class Hanzo : public Luchador {
 public:
-    Hanzo(float x, float y, sf::Color color) : Jugador(x, y, color) {}
+    Hanzo(float x, float y, sf::Color color) : Luchador(x, y, color) {}
 
     void lanzarCuchillo() override {
         Cuchillo cuchillo1(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 3);
@@ -118,12 +118,12 @@ public:
     }
 };
 
-class Samurai : public Jugador {
+class Samurai : public Luchador {
 private:
     int remainingJumps = 45;
 
 public:
-    Samurai(float x, float y, sf::Color color) : Jugador(x, y, color) {}
+    Samurai(float x, float y, sf::Color color) : Luchador(x, y, color) {}
 
     void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY) override {
         if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0) {

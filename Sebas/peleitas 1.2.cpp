@@ -1,11 +1,11 @@
 #include <SFML/Graphics.hpp>
 
-class Jugador {
+class Luchador {
 public:
     sf::RectangleShape rectan;
     float velocidad;
 
-    Jugador(float x, float y, sf::Color color) {
+    Luchador(float x, float y, sf::Color color) {
         rectan.setSize(sf::Vector2f(50.0f, 100.0f));
         rectan.setPosition(x, y);
         rectan.setFillColor(color);
@@ -39,8 +39,8 @@ public:
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Peleitas");
 
-    Jugador jugador1(375.0f, 450.0f, sf::Color::Red);
-    Jugador jugador2(175.0f, 450.0f, sf::Color::Black);
+    Luchador jugador1(375.0f, 450.0f, sf::Color::Red);
+    Luchador jugador2(175.0f, 450.0f, sf::Color::Black);
     Piso piso(0.0f, 550.0f);
 
     sf::Clock reloj;
