@@ -1,4 +1,5 @@
 #include "Hanzo.h"
+#include <SFML/Graphics.hpp>
 
 Hanzo::Hanzo(float x, float y, sf::Color color) : Luchador(x, y, color) {}
 

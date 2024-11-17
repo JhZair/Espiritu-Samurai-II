@@ -1,4 +1,5 @@
 #include "Samurai.h"
+#include <SFML/Graphics.hpp>
 
 Samurai::Samurai(float x, float y, sf::Color color) : Luchador(x, y, color), remainingJumps(45) {}
 

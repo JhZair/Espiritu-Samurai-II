@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Cuchillo.h"
+#include <vector>
 
 class Luchador
 {

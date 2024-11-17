@@ -11,8 +11,8 @@ public:
 
     Cuchillo(float x, float y);
 
-    void mover(float tiempoDelta){}
+    void mover(float tiempoDelta);
 
-    sf::Vector2f getPosicion(){}
+    sf::Vector2f getPosicion();
 };
 #endif

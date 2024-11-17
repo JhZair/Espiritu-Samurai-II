@@ -1,4 +1,5 @@
 #include "Cuchillo.h"
+#include <SFML/Graphics.hpp>
 
 Cuchillo::Cuchillo(float x, float y) : velocidad(500.0f)
 {
