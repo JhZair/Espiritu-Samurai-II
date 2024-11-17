@@ -1,5 +1,5 @@
-#include "Luchador.h"
 #include <SFML/Graphics.hpp>
+#include "Luchador.h"
 #include <vector>
 
 Luchador::Luchador(float x, float y, sf::Color color) : velocidad(200.0f), gravity(1100.5f), velocityY(0), jumpStrength(-480.0f),

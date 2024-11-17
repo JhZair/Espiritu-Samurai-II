@@ -2,7 +2,7 @@
 #ifndef ANIMACIONES_H
 #define ANIMACIONES_H
 
-class Animar: public sf::Sprite
+class Animación: public sf::Sprite
 {
     public:
         sf::Texture spriteSheet;     // Textura para el sprite sheet
@@ -17,14 +17,14 @@ class Animar: public sf::Sprite
         bool isPlaying;              // Comprobar si ta jugando   
             
          // Constructor
-    Animar();
-    ~Animar();
+    Animación();
+    ~Animación();
     // Métodos principales
     virtual bool CargarTexture(const std::string& texturePath);
     virtual void setTransparentColor(sf::Color color);
     virtual void IniciarAnimation(int frameWidth, int frameHeight, int numFrames, float frameTime = 0.1f, bool loop = true);
     virtual void updateAnimation(float deltaTime);
-    virtual void resetAnimation();
+    // virtual void resetAnimation();
     virtual void draw(sf::RenderWindow& window);
     virtual void setPosition(float x, float y);
     void pauseAnimation() { isPlaying = false; }

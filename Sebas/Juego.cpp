@@ -9,7 +9,7 @@
 
 Juego::Juego() : window(sf::VideoMode(800, 600), "Peleitas"), piso(0.0f, 550.0f), tiempoDelta(0.0f),animationsInitialized(false)
 {
-    jugador1 = new Hanzo(175.0f, 450.0f, sf::Color::Red);
+    jugador1 = new Hanzo(175.0f, 450.0f, sf::Color (0,0,0,0));
     jugador2 = new Samurai(375.0f, 450.0f, sf::Color::Red);
     inicializarAnimaciones();
     
@@ -75,8 +75,8 @@ void Juego::procesarEventos()
 
 void Juego::inicializarAnimaciones() {
         if (!animationsInitialized) {
-        if (jugador1->CargarTexture("Idle_Hanzo .png")) {
-            jugador1->setTransparentColor(sf::Color(8, 180, 92));
+        if (jugador1->CargarTexture("../assets/anims/hanzo/Idle_Hanzo.png")) {
+            jugador1->setTransparentColor(sf::Color(64, 176, 72));
             jugador1->IniciarAnimation(100, 118, 10, 0.1f, true);
             jugador1->playAnimation();  // Aseguramos que la animación está activa
             animationsInitialized = true;
@@ -86,9 +86,6 @@ void Juego::inicializarAnimaciones() {
         }
     }
 }
-
-
-
 
 void Juego::actualizar()
 {
@@ -101,7 +98,7 @@ void Juego::actualizar()
     jugador1->actualizarCuchillos(tiempoDelta);
     jugador2->actualizarCuchillos(tiempoDelta);
 
-    std::cout << "DeltaTime: " << tiempoDelta << std::endl;
+    // std::cout << "DeltaTime: " << tiempoDelta << std::endl;
     //std::cout<<jugador1->rectan.getPosition().x<<" "<<jugador1->rectan.getPosition().y<<std::endl;
 
     jugador1->setPosition(jugador1->rectan.getPosition().x,jugador1->rectan.getPosition().y);

@@ -1,5 +1,5 @@
-#include "Juego.h"
 #include <iostream>
+#include "Juego.h"
 #include <SFML/Graphics.hpp>
 
 Juego::Juego() : window(sf::VideoMode(800, 600), "Peleitas"), piso(0.0f, 550.0f), tiempoDelta(0.0f)
