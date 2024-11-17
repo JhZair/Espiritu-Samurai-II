@@ -17,8 +17,11 @@ Luchador::Luchador(float x, float y, sf::Color color) : velocidad(200.0f), gravi
 
 void Luchador::lanzarCuchillo()
 {
-    Cuchillo cuchillo(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
-    cuchillos.push_back(cuchillo);
+    if (clock.getElapsedTime().asSeconds() >= 2) {
+        Cuchillo cuchillo(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
+        cuchillos.push_back(cuchillo);
+        clock.restart(); // Reinicia el reloj para medir el tiempo nuevamente
+    }
 }
 
 void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY)

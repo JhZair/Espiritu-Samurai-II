@@ -18,7 +18,7 @@ public:
     float maxhealth;
     float health;
     int lives;
-
+    sf::Clock clock;
     std::vector<Cuchillo> cuchillos;
 
     Luchador(float x, float y, sf::Color color);

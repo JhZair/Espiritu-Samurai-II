@@ -39,7 +39,7 @@ public:
     float maxhealth = 200;
     float health = maxhealth;
     int lives = 2;
-
+    sf::Clock clock;
     std::vector<Cuchillo> cuchillos;
 
     Luchador(float x, float y, sf::Color color) {
@@ -55,7 +55,6 @@ public:
         velocidad = 200.0f;
     }
 
-  sf::Clock clock;
     virtual void lanzarCuchillo() {
     // Crea un nuevo cuchillo en la posición actual del jugador
     if (clock.getElapsedTime().asSeconds() >= 2) {
@@ -135,7 +134,6 @@ public:
 class Hanzo : public Luchador {
 public:
     Hanzo(float x, float y, sf::Color color) : Luchador(x, y, color) {}
-    sf::Clock clock;
     void lanzarCuchillo() override {
         if (clock.getElapsedTime().asSeconds() >= 2) {
         Cuchillo cuchillo1(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 3);
