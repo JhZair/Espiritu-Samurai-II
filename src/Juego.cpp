@@ -28,12 +28,14 @@ void Juego::manejarAtaques(const sf::Event &event)
 {
     if (event.key.code == sf::Keyboard::R && jugador1->hitbox.getGlobalBounds().intersects(jugador2->rectan.getGlobalBounds()))
     {
-        jugador2->recibirAtaque(20.0f);
+        float direccion = (jugador1->rectan.getPosition().x < jugador2->rectan.getPosition().x) ? 1.0f : -1.0f;
+        jugador2->recibirAtaque(20.0f, sf::Vector2f(direccion * 30.0f, -15.0f));
         verificarDerrota(jugador2, "Jugador 1");
     }
     if (event.key.code == sf::Keyboard::P && jugador2->hitbox.getGlobalBounds().intersects(jugador1->rectan.getGlobalBounds()))
     {
-        jugador1->recibirAtaque(20.0f);
+        float direccion = (jugador2->rectan.getPosition().x < jugador1->rectan.getPosition().x) ? 1.0f : -1.0f;
+        jugador1->recibirAtaque(20.0f, sf::Vector2f(direccion * 30.0f, -15.0f));
         verificarDerrota(jugador1, "Jugador 2");
     }
 }
@@ -49,6 +51,7 @@ void Juego::manejarProyectiles(const sf::Event &event)
         jugador2->lanzarCuchillo();
     }
 }
+
 
 void Juego::actualizar()
 {

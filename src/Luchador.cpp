@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "Luchador.h"
 #include <vector>
 
@@ -56,9 +57,12 @@ void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard
     }
 }
 
-void Luchador::recibirAtaque(float damage)
+void Luchador::recibirAtaque(float damage, sf::Vector2f retroceso)
 {
     health -= damage;
+    rectan.move(retroceso);
+    isJumping = true;
+
     if (health <= 0)
     {
         health = maxhealth;
