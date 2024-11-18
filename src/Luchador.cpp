@@ -4,7 +4,7 @@
 #include <vector>
 
 Luchador::Luchador(float x, float y, sf::Color color) : velocidad(200.0f), gravity(1100.5f), velocityY(0), jumpStrength(-480.0f),
-                                                        isJumping(false), maxhealth(200), health(maxhealth), lives(2)
+                                                        isJumping(false), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f), retroceso_y(0.0f)
 {
     rectan.setSize(sf::Vector2f(50.0f, 100.0f));
     rectan.setPosition(x, y);
@@ -49,22 +49,32 @@ void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard
     rectan.move(0.0f, velocityY * tiempoDelta);
     hitbox.setPosition(rectan.getPosition());
 
+    // Aplicar retroceso
+    rectan.move(retroceso_x * tiempoDelta, retroceso_y * tiempoDelta);
+    hitbox.move(retroceso_x * tiempoDelta, retroceso_y * tiempoDelta);
+
+    // Reducir gradualmente el retroceso
+    retroceso_x *= 0.9f;
+    retroceso_y *= 0.9f;
+
     if (rectan.getPosition().y + rectan.getSize().y >= pisoY)
     {
         rectan.setPosition(rectan.getPosition().x, pisoY - rectan.getSize().y);
         velocityY = 0;
         isJumping = false;
+
+        retroceso_y = 0.0f;
     }
 }
 
 void Luchador::recibirAtaque(float damage, sf::Vector2f retroceso)
 {
     health -= damage;
-    rectan.move(retroceso);
+    // Escalar el retroceso para hacerlo más perceptible
+    retroceso_x = retroceso.x * 5.0f; // Ajusta el factor según sea necesario
+    retroceso_y = retroceso.y * 5.0f; // Aumenta la escala en Y para más elevación
     isJumping = true;
-
-    if (health <= 0)
-    {
+    if (health <= 0) {
         health = maxhealth;
         lives--;
     }

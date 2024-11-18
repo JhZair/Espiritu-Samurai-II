@@ -18,6 +18,10 @@ public:
     float maxhealth;
     float health;
     int lives;
+
+    float retroceso_x;
+    float retroceso_y;
+    
     sf::Clock clock;
     std::vector<Cuchillo> cuchillos;
 

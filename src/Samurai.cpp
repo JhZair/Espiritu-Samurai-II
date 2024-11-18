@@ -29,6 +29,14 @@ void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard:
     rectan.move(0.0f, velocityY * tiempoDelta);
     hitbox.setPosition(rectan.getPosition()); // Actualizar la posición de la hitbox
 
+    // Aplicar retroceso
+    rectan.move(retroceso_x * tiempoDelta, retroceso_y * tiempoDelta);
+    hitbox.move(retroceso_x * tiempoDelta, retroceso_y * tiempoDelta);
+
+    // Reducir gradualmente el retroceso
+    retroceso_x *= 0.9f;
+    retroceso_y *= 0.9f;
+
     // Comprobar colisión con el piso
     if (rectan.getPosition().y + rectan.getSize().y >= pisoY)
     {
@@ -36,5 +44,6 @@ void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard:
         velocityY = 0;
         isJumping = false;
         remainingJumps = 45;
+        retroceso_y = 0.0f;
     }
 }

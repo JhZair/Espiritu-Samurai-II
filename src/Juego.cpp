@@ -29,13 +29,13 @@ void Juego::manejarAtaques(const sf::Event &event)
     if (event.key.code == sf::Keyboard::R && jugador1->hitbox.getGlobalBounds().intersects(jugador2->rectan.getGlobalBounds()))
     {
         float direccion = (jugador1->rectan.getPosition().x < jugador2->rectan.getPosition().x) ? 1.0f : -1.0f;
-        jugador2->recibirAtaque(20.0f, sf::Vector2f(direccion * 30.0f, -15.0f));
+        jugador2->recibirAtaque(20.0f, sf::Vector2f(direccion * 150.0f, -150.0f));
         verificarDerrota(jugador2, "Jugador 1");
     }
     if (event.key.code == sf::Keyboard::P && jugador2->hitbox.getGlobalBounds().intersects(jugador1->rectan.getGlobalBounds()))
     {
         float direccion = (jugador2->rectan.getPosition().x < jugador1->rectan.getPosition().x) ? 1.0f : -1.0f;
-        jugador1->recibirAtaque(20.0f, sf::Vector2f(direccion * 30.0f, -15.0f));
+        jugador1->recibirAtaque(20.0f, sf::Vector2f(direccion * 150.0f, -150.0f));
         verificarDerrota(jugador1, "Jugador 2");
     }
 }
