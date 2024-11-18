@@ -18,7 +18,7 @@ public:
     float maxhealth;
     float health;
     int lives;
-
+    bool reapareciendo;
     float retroceso_x;
     float retroceso_y;
     
@@ -32,5 +32,6 @@ public:
     void recibirAtaque(float damage, sf::Vector2f retroceso);
     void actualizarCuchillos(float tiempoDelta);
     void drawHealthBar(sf::RenderWindow& window, sf::Vector2f position);
+    void reducirVidas(sf::Vector2f posicionInicial);
 };
 #endif

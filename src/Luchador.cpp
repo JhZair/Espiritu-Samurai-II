@@ -4,7 +4,7 @@
 #include <vector>
 
 Luchador::Luchador(float x, float y, sf::Color color) : velocidad(200.0f), gravity(1100.5f), velocityY(0), jumpStrength(-480.0f),
-                                                        isJumping(false), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f), retroceso_y(0.0f)
+                                                        isJumping(false), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f), retroceso_y(0.0f), reapareciendo(false)
 {
     rectan.setSize(sf::Vector2f(50.0f, 100.0f));
     rectan.setPosition(x, y);
@@ -76,8 +76,18 @@ void Luchador::recibirAtaque(float damage, sf::Vector2f retroceso)
     isJumping = true;
     if (health <= 0) {
         health = maxhealth;
-        lives--;
+        reducirVidas({400.0f, -rectan.getSize().y});
     }
+}
+
+void Luchador::reducirVidas(sf::Vector2f posicionInicial)
+{
+    lives--;
+    rectan.setPosition(posicionInicial);
+    hitbox.setPosition(posicionInicial);
+
+    retroceso_x = 0.0f;
+    retroceso_y = 0.0f;
 }
 
 void Luchador::actualizarCuchillos(float tiempoDelta)
