@@ -7,24 +7,37 @@
 #include "Samurai.h"
 #include "Piso.h"
 
-class Juego {
-private:
-    sf::RenderWindow window;
-    Luchador* jugador1;
-    Luchador* jugador2;
-    Piso piso;
-    sf::Clock reloj;
-    float tiempoDelta;
-
+class Juego
+{
 public:
     Juego();
     ~Juego();
+
     void ejecutar();
 
 private:
+    sf::RenderWindow window;
+    sf::Clock reloj;
+    Piso piso;
+
+    Luchador* jugador1;
+    Luchador* jugador2;
+
+    float tiempoDelta;
+    float tiempoPartida;
+    float inicioTiempo;
+
     void procesarEventos();
     void actualizar();
     void renderizar();
+
+    void reiniciarJugadores();
+    void manejarAtaques(const sf::Event& event);
+    void manejarProyectiles(const sf::Event& event);
+    void verificarDerrota(Luchador* jugador, const std::string& ganador);
+    void determinarGanador();
+    void dibujarTiempoRestante();
+    float calcularTiempoRestante();
 };
 
 #endif
