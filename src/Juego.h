@@ -18,6 +18,7 @@ public:
 private:
     sf::RenderWindow window;
     sf::Clock reloj;
+    sf::Clock relojMov;
     Piso piso;
 
     Luchador* jugador1;

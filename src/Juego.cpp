@@ -6,7 +6,7 @@ Juego::Juego()
     : window(sf::VideoMode(800, 600), "Peleitas"), 
       piso(0.0f, 550.0f), 
       tiempoDelta(0.0f), 
-      tiempoPartida(10.0f), 
+      tiempoPartida(90.0f), 
       inicioTiempo(reloj.getElapsedTime().asSeconds())
 {
     reiniciarJugadores();
@@ -52,6 +52,7 @@ void Juego::manejarProyectiles(const sf::Event &event)
 
 void Juego::actualizar()
 {
+    tiempoDelta = relojMov.restart().asSeconds();
     // Actualizar movimiento de jugadores
     jugador1->move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y);
     jugador2->move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
