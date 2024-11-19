@@ -31,6 +31,55 @@ void Juego::ejecutar()
     }
 }
 
+void Juego::inicializarAnimaciones() {
+    if (!animationsInitialized) {
+        // Configurar IDLE
+        jugador1->configurarAnimacion(
+            EstadoAnimacion::IDLE,
+            "../assets/anims/hanzo/Idle_Hanzo.png",
+            100,    // ancho
+            118,    // alto
+            10,     // frames
+            0.1f    // tiempo
+        );
+
+        // Configurar WALK
+        jugador1->configurarAnimacion(
+            EstadoAnimacion::WALK,
+            "../assets/anims/hanzo/caminata_Hanzo.png",
+            120,    // ancho diferente
+            130,    // alto diferente
+            8,      // frames diferentes
+            0.08f   // tiempo diferente
+        );
+
+        // Configurar ATTACK
+        jugador1->configurarAnimacion(
+            EstadoAnimacion::ATTACK,
+            "../assets/anims/hanzo/ataque_Hanzo.png",
+            140,    // ancho diferente
+            120,    // alto diferente
+            6,      // frames diferentes
+            0.05f   // tiempo diferente
+        );
+
+        if (jugador1->cargarTodasLasTexturas()) {
+            jugador1->setTransparentColor(sf::Color(64, 176, 72), EstadoAnimacion::IDLE);
+            jugador1->setTransparentColor(sf::Color(64, 176, 72), EstadoAnimacion::WALK);
+            jugador1->setTransparentColor(sf::Color(64, 176, 72), EstadoAnimacion::ATTACK);
+            
+            jugador1->playAnimation();
+            animationsInitialized = true;
+            std::cout << "Animaciones inicializadas correctamente" << std::endl;
+        } else {
+            std::cerr << "Error al cargar las texturas de animación!" << std::endl;
+        }
+    }
+}
+
+
+
+
 void Juego::procesarEventos()
 {
     sf::Event event;
@@ -45,15 +94,31 @@ void Juego::procesarEventos()
         {
             if (event.key.code == sf::Keyboard::R && jugador1->hitbox.getGlobalBounds().intersects(jugador2->rectan.getGlobalBounds()))
             {
+               
+                if(sf::Event::KeyPressed){
+                    if (event.key.code == sf::Keyboard::R)
+                    {
+                            jugador1->cambiarEstado(EstadoAnimacion::ATTACK);
+                            if (event.type == sf::Event::KeyReleased)
+                                jugador1->cambiarEstado(EstadoAnimacion::IDLE);
+                    }
+                    
+                }
+                
                 jugador2->recibirAtaque(20.0f);
                 if (jugador2->lives == 0)
+
                 {
                     std::cout << "Jugador 1 gana!" << std::endl;
                     window.close();
                 }
+                
+
             }
+            
             if (event.key.code == sf::Keyboard::P && jugador2->hitbox.getGlobalBounds().intersects(jugador1->rectan.getGlobalBounds()))
             {
+
                 jugador1->recibirAtaque(20.0f);
                 if (jugador1->lives == 0)
                 {
@@ -69,23 +134,12 @@ void Juego::procesarEventos()
             {
                 jugador2->lanzarCuchillo();
             } 
+            
         }
     }
 }
 
-void Juego::inicializarAnimaciones() {
-        if (!animationsInitialized) {
-        if (jugador1->CargarTexture("../assets/anims/hanzo/Idle_Hanzo.png")) {
-            jugador1->setTransparentColor(sf::Color(64, 176, 72));
-            jugador1->IniciarAnimation(100, 118, 10, 0.1f, true);
-            jugador1->playAnimation();  // Aseguramos que la animación está activa
-            animationsInitialized = true;
-            std::cout << "Animación inicializada correctamente" << std::endl;
-        } else {
-            std::cerr << "Error al cargar la textura de la animación!" << std::endl;
-        }
-    }
-}
+
 
 void Juego::actualizar()
 {

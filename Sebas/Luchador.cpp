@@ -1,6 +1,6 @@
 #include "Luchador.h"
 
-Luchador::Luchador(float x, float y, sf::Color color) :  Animación(), velocidad(200.0f), gravity(1100.5f), velocityY(0), jumpStrength(-480.0f),
+Luchador::Luchador(float x, float y, sf::Color color) :  Animar(), velocidad(200.0f), gravity(1100.5f), velocityY(0), jumpStrength(-480.0f),
                                                         isJumping(false), maxhealth(200), health(maxhealth), lives(2)
 {
     rectan.setSize(sf::Vector2f(50.0f, 100.0f));
@@ -31,6 +31,7 @@ void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard
     if (sf::Keyboard::isKeyPressed(derecha) && rectan.getPosition().x < 750)
     {
         rectan.move(velocidad * tiempoDelta, 0.0f);
+        
     }
     if (isJumping)
     {

@@ -1,85 +1,125 @@
 #include "Animaciones.h"
 #include <iostream>
-Animación::Animación() : 
+
+Animar::Animar() : 
     currentFrame(0),
-    frameCount(0),
-    frameTime(0.1f),
     currentTime(0),
     loop(true),
-    frameWidth(0),
-    frameHeight(0),
-    isPlaying(true)
-{
+    isPlaying(true),
+    estadoActual(EstadoAnimacion::IDLE) {
 }
-Animación::~Animación(){}
 
-bool Animación::CargarTexture(const std::string& texturePath) {
-    if (!spriteSheet.loadFromFile(texturePath)) {
+Animar::~Animar() {
+}
+
+void Animar::configurarAnimacion(
+    EstadoAnimacion estado, 
+    const std::string& path, 
+    int ancho, 
+    int alto, 
+    int frames, 
+    float tiempoFrame
+) {
+    rutas[estado] = path;
+    anchos[estado] = ancho;
+    altos[estado] = alto;
+    numFrames[estado] = frames;
+    tiemposFrame[estado] = tiempoFrame;
+}
+
+bool Animar::cargarTodasLasTexturas() {
+    bool success = true;
+    
+    for (const auto& par : rutas) {
+        EstadoAnimacion estado = par.first;
+        const std::string& ruta = par.second;
         
-        return false;
+        if (!texturas[estado].loadFromFile(ruta)) {
+            std::cerr << "Error cargando textura: " << ruta << std::endl;
+            success = false;
+        }
     }
-    setTexture(spriteSheet);
     
-    return true;
+    if (success) {
+        cambiarEstado(EstadoAnimacion::IDLE);
+    }
+    
+    return success;
 }
 
-void Animación::setTransparentColor(sf::Color color) {
-    sf::Image spriteImage = spriteSheet.copyToImage();
-    spriteImage.createMaskFromColor(color);
-    spriteSheet.loadFromImage(spriteImage);
-    setTexture(spriteSheet);
+void Animar::setTransparentColor(sf::Color color, EstadoAnimacion estado) {
+    auto it = texturas.find(estado);
+    if (it != texturas.end()) {
+        sf::Image spriteImage = it->second.copyToImage();
+        spriteImage.createMaskFromColor(color);
+        it->second.loadFromImage(spriteImage);
+        if (estado == estadoActual) {
+            setTexture(it->second);
+        }
+    }
 }
 
-void Animación::IniciarAnimation(int width, int height, int numFrames, float frameDuration, bool shouldLoop) {
-    frameWidth = width;
-    frameHeight = height;
-    frameCount = numFrames;
-    frameTime = frameDuration;
-    loop = shouldLoop;
+void Animar::updateAnimation(float deltaTime) {
+    if (!isPlaying) return;
     
-    frameRect = sf::IntRect(0, 0, frameWidth, frameHeight);
-    setTextureRect(frameRect);
-    
-    // Resetear la animación
-    currentFrame = 0;
-    currentTime = 0;
-}
-
-void Animación::updateAnimation(float deltaTime) {
-    if (!isPlaying || frameCount <= 1) return;
+    float tiempoFrameActual = tiemposFrame[estadoActual];
+    int framesActuales = numFrames[estadoActual];
+    int anchoActual = anchos[estadoActual];
+    int altoActual = altos[estadoActual];
     
     currentTime += deltaTime;
     
-    if (currentTime >= frameTime) {
-        currentTime -= frameTime;  // Restamos el tiempo transcurrido en lugar de ponerlo a 0
+    if (currentTime >= tiempoFrameActual) {
+        currentTime -= tiempoFrameActual;
         
         currentFrame++;
-        if (currentFrame >= frameCount) {
+        if (currentFrame >= framesActuales) {
             if (loop) {
                 currentFrame = 0;
             } else {
-                currentFrame = frameCount - 1;
+                currentFrame = framesActuales - 1;
                 isPlaying = false;
                 return;
             }
         }
         
-        // Actualizar el rectángulo de la textura
-        frameRect.left = currentFrame * frameWidth;
+        frameRect.left = currentFrame * anchoActual;
+        frameRect.top = 0;
+        frameRect.width = anchoActual;
+        frameRect.height = altoActual;
         setTextureRect(frameRect);
     }
 }
 
-// void Animación::resetAnimation() {
-//     currentFrame = 0;
-//     currentTime = 0;
-//     frameRect.left = 0;
-//     setTextureRect(frameRect);
-// }
-void Animación::draw(sf::RenderWindow& window) {
-    window.draw(*this);  // Dibuja el sprite con la animación
+void Animar::cambiarEstado(EstadoAnimacion nuevoEstado) {
+    if (estadoActual != nuevoEstado) {
+        auto itTextura = texturas.find(nuevoEstado);
+        
+        if (itTextura != texturas.end()) {
+            estadoActual = nuevoEstado;
+            setTexture(itTextura->second);
+            
+            frameRect.width = anchos[nuevoEstado];
+            frameRect.height = altos[nuevoEstado];
+            resetAnimation();
+        } else {
+            std::cerr << "Animación no encontrada para el estado solicitado." << std::endl;
+        }
+    }
 }
-void Animación::setPosition(float x , float y)
-{
+
+void Animar::resetAnimation() {
+    currentFrame = 0;
+    currentTime = 0;
+    frameRect.left = 0;
+    frameRect.top = 0;
+    setTextureRect(frameRect);
+}
+
+void Animar::draw(sf::RenderWindow& window) {
+    window.draw(*this);
+}
+
+void Animar::setPosition(float x, float y) {
     sf::Sprite::setPosition(x, y);
 }
