@@ -1,7 +1,7 @@
 #include "Animaciones.h"
 #include <iostream>
 
-Animar::Animar() : 
+Animacion::Animacion() : 
     currentFrame(0),
     currentTime(0),
     loop(true),
@@ -9,10 +9,10 @@ Animar::Animar() :
     estadoActual(EstadoAnimacion::IDLE) {
 }
 
-Animar::~Animar() {
+Animacion::~Animacion() {
 }
 
-void Animar::configurarAnimacion(
+void Animacion::configurarAnimacion(
     EstadoAnimacion estado, 
     const std::string& path, 
     int ancho, 
@@ -27,7 +27,7 @@ void Animar::configurarAnimacion(
     tiemposFrame[estado] = tiempoFrame;
 }
 
-bool Animar::cargarTodasLasTexturas() {
+bool Animacion::cargarTodasLasTexturas() {
     bool success = true;
     
     for (const auto& par : rutas) {
@@ -47,7 +47,7 @@ bool Animar::cargarTodasLasTexturas() {
     return success;
 }
 
-void Animar::setTransparentColor(sf::Color color, EstadoAnimacion estado) {
+void Animacion::setTransparentColor(sf::Color color, EstadoAnimacion estado) {
     auto it = texturas.find(estado);
     if (it != texturas.end()) {
         sf::Image spriteImage = it->second.copyToImage();
@@ -59,7 +59,7 @@ void Animar::setTransparentColor(sf::Color color, EstadoAnimacion estado) {
     }
 }
 
-void Animar::updateAnimation(float deltaTime) {
+void Animacion::updateAnimation(float deltaTime) {
     if (!isPlaying) return;
     
     float tiempoFrameActual = tiemposFrame[estadoActual];
@@ -91,7 +91,7 @@ void Animar::updateAnimation(float deltaTime) {
     }
 }
 
-void Animar::cambiarEstado(EstadoAnimacion nuevoEstado) {
+void Animacion::cambiarEstado(EstadoAnimacion nuevoEstado) {
     if (estadoActual != nuevoEstado) {
         auto itTextura = texturas.find(nuevoEstado);
         
@@ -108,7 +108,7 @@ void Animar::cambiarEstado(EstadoAnimacion nuevoEstado) {
     }
 }
 
-void Animar::resetAnimation() {
+void Animacion::resetAnimation() {
     currentFrame = 0;
     currentTime = 0;
     frameRect.left = 0;
@@ -116,10 +116,10 @@ void Animar::resetAnimation() {
     setTextureRect(frameRect);
 }
 
-void Animar::draw(sf::RenderWindow& window) {
+void Animacion::draw(sf::RenderWindow& window) {
     window.draw(*this);
 }
 
-void Animar::setPosition(float x, float y) {
+void Animacion::setPosition(float x, float y) {
     sf::Sprite::setPosition(x, y);
 }

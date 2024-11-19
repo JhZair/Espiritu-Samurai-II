@@ -6,7 +6,7 @@
 
 enum class EstadoAnimacion { IDLE, WALK, ATTACK, BLOCK, JUMP };
 
-class Animar : public sf::Sprite {
+class Animacion : public sf::Sprite {
 private:
     std::map<EstadoAnimacion, sf::Texture> texturas;
     std::map<EstadoAnimacion, std::string> rutas;
@@ -23,8 +23,8 @@ public:
     bool isPlaying;
     EstadoAnimacion estadoActual;
 
-    Animar();
-    ~Animar();
+    Animacion();
+    ~Animacion();
 
     // Método para configurar una animación específica
     void configurarAnimacion(

@@ -5,7 +5,7 @@
 #include "Cuchillo.h"
 #include "Animaciones.h"
 
-class Luchador: public Animar
+class Luchador: public Animacion
 {
 public:
 

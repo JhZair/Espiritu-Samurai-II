@@ -5,7 +5,6 @@
 #include "Animaciones.h"
 class Piso {
 public:
-    friend class Animar;
     sf::RectangleShape rectan;
 
     Piso(float x, float y);
