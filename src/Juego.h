@@ -6,6 +6,7 @@
 #include "Hanzo.h"
 #include "Samurai.h"
 #include "Piso.h"
+#include "Animaciones.h"
 
 class Juego
 {
@@ -27,10 +28,13 @@ private:
     float tiempoDelta;
     float tiempoPartida;
     float inicioTiempo;
+    bool animationsInitialized;
 
     void procesarEventos();
     void actualizar();
     void renderizar();
+
+    void inicializarAnimaciones();
 
     void reiniciarJugadores();
     void manejarAtaques(const sf::Event& event);

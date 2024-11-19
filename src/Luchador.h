@@ -3,9 +3,10 @@
 
 #include <SFML/Graphics.hpp>
 #include "Cuchillo.h"
+#include "Animaciones.h"
 #include <vector>
 
-class Luchador
+class Luchador : public Animación
 {
 public:
     sf::RectangleShape rectan;
@@ -34,4 +35,5 @@ public:
     void drawHealthBar(sf::RenderWindow& window, sf::Vector2f position);
     void reducirVidas(sf::Vector2f posicionInicial);
 };
+
 #endif

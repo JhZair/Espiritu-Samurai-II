@@ -13,7 +13,7 @@ Luchador::Luchador(float x, float y, sf::Color color) : velocidad(200.0f), gravi
     hitbox.setSize(sf::Vector2f(115.0f, 150.0f));
     hitbox.setOrigin(35.0f, 50.0f);
     hitbox.setPosition(rectan.getPosition());
-    hitbox.setFillColor(sf::Color(255, 0, 0, 0)); // Cambiar último 0 para ver hitbox
+    hitbox.setFillColor(sf::Color(255, 0, 0, 100)); // Cambiar último 0 para ver hitbox
 }
 
 void Luchador::lanzarCuchillo()

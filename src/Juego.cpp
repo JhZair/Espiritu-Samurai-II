@@ -22,6 +22,7 @@ void Juego::reiniciarJugadores()
 {
     jugador1 = new Hanzo(175.0f, 450.0f, sf::Color::Yellow);
     jugador2 = new Samurai(375.0f, 450.0f, sf::Color::Red);
+    inicializarAnimaciones();
 }
 
 void Juego::manejarAtaques(const sf::Event &event)
@@ -59,6 +60,9 @@ void Juego::actualizar()
     // Actualizar movimiento de jugadores
     jugador1->move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y);
     jugador2->move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
+
+    jugador1->setPosition(jugador1->rectan.getPosition().x,jugador1->rectan.getPosition().y);
+    jugador1->updateAnimation(tiempoDelta);
 
     // Actualizar proyectiles
     jugador1->actualizarCuchillos(tiempoDelta);
@@ -122,6 +126,20 @@ void Juego::determinarGanador()
     window.close();
 }
 
+void Juego::inicializarAnimaciones() {
+        if (!animationsInitialized) {
+        if (jugador1->CargarTexture("../assets/anims/hanzo/Idle_Hanzo.png")) {
+            jugador1->setTransparentColor(sf::Color(64, 176, 72));
+            jugador1->IniciarAnimation(100, 118, 10, 0.1f, true);
+            jugador1->playAnimation();  // Aseguramos que la animación está activa
+            animationsInitialized = true;
+            std::cout << "Animación inicializada correctamente" << std::endl;
+        } else {
+            std::cerr << "Error al cargar la textura de la animación!" << std::endl;
+        }
+    }
+}
+
 void Juego::ejecutar()
 {
     while (window.isOpen())
@@ -165,12 +183,14 @@ void Juego::renderizar()
     window.draw(piso.rectan);
 
     // Dibujar jugadores
-    window.draw(jugador1->rectan);
+    // window.draw(jugador1->rectan);
     window.draw(jugador2->rectan);
 
+    jugador1->draw(window);
+
     // Dibujar hitboxes (opcional, para depuración)
-    window.draw(jugador1->hitbox);
-    window.draw(jugador2->hitbox);
+    // window.draw(jugador1->hitbox);
+    // window.draw(jugador2->hitbox);
 
     // Dibujar barras de salud
     jugador1->drawHealthBar(window, sf::Vector2f(25.0f, 50.0f));
