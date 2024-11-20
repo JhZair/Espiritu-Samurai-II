@@ -31,6 +31,7 @@ class Luchador {
 public:
     sf::RectangleShape rectan;
     sf::RectangleShape hitbox;
+     float energia = 0.0f;
     float velocidad;
     float gravity = 1100.5f;
     float velocityY = 0;
@@ -53,7 +54,15 @@ public:
         hitbox.setFillColor(sf::Color(0, 0, 0, 0));
 
         velocidad = 200.0f;
+        energia=0.0f;
     }
+
+    virtual void usarUltimate(Luchador& oponente) {
+    if (energia == 100.0f) {  // Solo si la energía está llena
+        std::cout << "Ultimate activada pero no definida para este luchador." << std::endl;
+        energia = 0.0f;  // Restablece la energía después de usar la ultimate
+    }
+}
 
     virtual void lanzarCuchillo() {
     // Crea un nuevo cuchillo en la posición actual del jugador
@@ -98,6 +107,13 @@ public:
         }
     }
 
+    void aumentarEnergia(float cantidad) {
+    energia += cantidad;
+    if (energia > 100.0f) energia = 100.0f;
+    if (energia < 0.0f) energia = 0.0f;
+}
+
+
     void actualizarCuchillos(float tiempoDelta) {
         for (auto& cuchillo : cuchillos) {
             cuchillo.mover(tiempoDelta);
@@ -127,22 +143,74 @@ public:
         window.draw(barraTotal);
         window.draw(barraSalud);
     }
+    void drawEnergiaBar(sf::RenderWindow& window, sf::Vector2f position) {
+    int anchoBarra = 200;
+    int altoBarra = 10;
+    float anchoBarraActual = (static_cast<float>(energia) / 100.0f) * anchoBarra;
+
+    sf::RectangleShape barraTotal(sf::Vector2f(anchoBarra, altoBarra));
+    barraTotal.setPosition(position);
+    barraTotal.setFillColor(sf::Color(100, 100, 100));
+    barraTotal.setOutlineColor(sf::Color::Black);
+    barraTotal.setOutlineThickness(2);
+
+    sf::RectangleShape barraEnergia(sf::Vector2f(anchoBarraActual, altoBarra));
+    barraEnergia.setPosition(position);
+    barraEnergia.setFillColor(sf::Color::White);
+
+    window.draw(barraTotal);
+    window.draw(barraEnergia);
+}
 };
 
 
 
 class Hanzo : public Luchador {
 public:
+    std::vector<sf::CircleShape> ultimates; // Vector para almacenar la Ultimate
+
     Hanzo(float x, float y, sf::Color color) : Luchador(x, y, color) {}
+
     void lanzarCuchillo() override {
         if (clock.getElapsedTime().asSeconds() >= 2) {
-        Cuchillo cuchillo1(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 3);
-        Cuchillo cuchillo2(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + 2 * rectan.getSize().y / 3);
-        cuchillos.push_back(cuchillo1);
-        cuchillos.push_back(cuchillo2);
-        clock.restart();
+            Cuchillo cuchillo1(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 3);
+            Cuchillo cuchillo2(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + 2 * rectan.getSize().y / 3);
+            cuchillos.push_back(cuchillo1);
+            cuchillos.push_back(cuchillo2);
+            clock.restart();
+        }
+    }
+
+    void usarUltimate(Luchador& oponente) override {
+        if (energia == 100.0f) {
+            std::cout << "Hanzo lanza su bola gigante!" << std::endl;
+
+            // Reduce la mitad de la barra de salud del oponente
+            oponente.recibirAtaque(oponente.maxhealth / 2);
+
+            // Crear la representación gráfica de la Ultimate
+            sf::CircleShape ultimate(50.0f); // Puedes ajustar el tamaño
+            ultimate.setPosition(rectan.getPosition().x + 50, rectan.getPosition().y); // Posición inicial
+            ultimate.setFillColor(sf::Color::Yellow); // Color de la Ultimate
+            ultimates.push_back(ultimate);
+
+            // Restablece la energía después de usar la ultimate
+            energia = 0.0f;
+        }
+    }
+
+    void actualizarUltimates(float tiempoDelta) {
+        for (auto& ultimate : ultimates) {
+            ultimate.move(200.0f * tiempoDelta, 0); // Mueve la Ultimate hacia la derecha
         }
 
+        // Eliminar Ultimate que se sale de la pantalla
+        ultimates.erase(
+            std::remove_if(ultimates.begin(), ultimates.end(), [](const sf::CircleShape& ultimate) {
+                return ultimate.getPosition().x > 800; // Fuera de la pantalla
+            }),
+            ultimates.end()
+        );
     }
 };
 
@@ -155,6 +223,21 @@ private:
 
 public:
     Samurai(float x, float y, sf::Color color) : Luchador(x, y, color) {}
+    
+    void usarUltimate(Luchador& oponente) override {
+    if (energia == 100.0f) {
+        std::cout << "Samurai se cura con su ultimate!" << std::endl;
+
+        // Cura 3/4 de su barra de salud
+        health += maxhealth * 0.75f;
+        if (health > maxhealth) {
+            health = maxhealth;  // No exceder la salud máxima
+        }
+
+        // Restablece la energía después de usar la ultimate
+        energia = 0.0f;
+    }
+}
 
     void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY) override {
         if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0) {
@@ -237,67 +320,106 @@ public:
 
 private:
     void procesarEventos() {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
+    sf::Event event;
+    while (window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed) {
+            window.close();
+        }
 
-            if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::R && jugador1->hitbox.getGlobalBounds().intersects(jugador2->rectan.getGlobalBounds())) {
-                    jugador2->recibirAtaque(20.0f);
+        if (event.type == sf::Event::KeyPressed) {
+            // Ataque del jugador 1 (tecla R)
+            if (event.key.code == sf::Keyboard::R) {
+                if (jugador1->hitbox.getGlobalBounds().intersects(jugador2->rectan.getGlobalBounds())) {
+                    jugador2->recibirAtaque(5.0f);  // Jugador 2 pierde vida
+                    jugador1->aumentarEnergia(8.0f); // Jugador 1 gana energía
+                    std::cout << "Jugador 1 atacó a jugador 2" << std::endl;
+                    std::cout << "Energía jugador 1: " << jugador1->energia << std::endl;
+                    std::cout << "Energía jugador 2: " << jugador2->energia << std::endl;
+
                     if (jugador2->lives == 0) {
                         std::cout << "Jugador 1 gana!" << std::endl;
                         window.close();
                     }
                 }
-                if (event.key.code == sf::Keyboard::P && jugador2->hitbox.getGlobalBounds().intersects(jugador1->rectan.getGlobalBounds())) {
-                    jugador1->recibirAtaque(20.0f);
+            }
+
+            // Ataque del jugador 2 (tecla P)
+            if (event.key.code == sf::Keyboard::P) {
+                if (jugador2->hitbox.getGlobalBounds().intersects(jugador1->rectan.getGlobalBounds())) {
+                    jugador1->recibirAtaque(5.0f);  // Jugador 1 pierde vida
+                    jugador2->aumentarEnergia(8.0f); // Jugador 2 gana energía
+                    std::cout << "Jugador 2 atacó a jugador 1" << std::endl;
+                    std::cout << "Energía jugador 1: " << jugador1->energia << std::endl;
+                    std::cout << "Energía jugador 2: " << jugador2->energia << std::endl;
+
                     if (jugador1->lives == 0) {
                         std::cout << "Jugador 2 gana!" << std::endl;
                         window.close();
                     }
                 }
-                if (event.key.code == sf::Keyboard::Q) {
-                    jugador1->lanzarCuchillo();
-                }
-                if (event.key.code == sf::Keyboard::O) {
-                    jugador2->lanzarCuchillo();
-                }
+            }
+
+            // Lanzar cuchillo por el jugador 1
+            if (event.key.code == sf::Keyboard::Q) {
+                jugador1->lanzarCuchillo();
+            }
+
+            // Lanzar cuchillo por el jugador 2
+            if (event.key.code == sf::Keyboard::O) {
+                jugador2->lanzarCuchillo();
+            }
+            //ULTIS
+             if (event.key.code == sf::Keyboard::T) {
+                jugador1->usarUltimate(*jugador2);
+            }
+            if (event.key.code == sf::Keyboard::I) {
+                jugador2->usarUltimate(*jugador1);
             }
         }
     }
+}
+
+
 
     void actualizar() {
-        tiempoDelta = reloj.restart().asSeconds();
-        jugador1->move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y);
-        jugador2->move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
+    tiempoDelta = reloj.restart().asSeconds();
+    jugador1->move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y);
+    jugador2->move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
 
-        jugador1->actualizarCuchillos(tiempoDelta);
-        jugador2->actualizarCuchillos(tiempoDelta);
-    }
-
+    jugador1->actualizarCuchillos(tiempoDelta);
+    jugador2->actualizarCuchillos(tiempoDelta);
+    static_cast<Hanzo*>(jugador1)->actualizarUltimates(tiempoDelta); // Actualiza las ultimates de Hanzo
+}
     void renderizar() {
-        window.clear(sf::Color::Blue);
-        window.draw(piso.rectan);
-        window.draw(jugador1->rectan);
-        window.draw(jugador2->rectan);
+    window.clear(sf::Color::Blue);
+    window.draw(piso.rectan);
+    window.draw(jugador1->rectan);
+    window.draw(jugador2->rectan);
 
-        window.draw(jugador1->hitbox);
-        window.draw(jugador2->hitbox);
+    window.draw(jugador1->hitbox);
+    window.draw(jugador2->hitbox);
 
-        jugador1->drawHealthBar(window, sf::Vector2f(25.0f, 50.0f));
-        jugador2->drawHealthBar(window, sf::Vector2f(575.0f, 50.0f));
+    jugador1->drawHealthBar(window, sf::Vector2f(25.0f, 50.0f));
+    jugador2->drawHealthBar(window, sf::Vector2f(575.0f, 50.0f));
 
-        for (auto& cuchillo : jugador1->cuchillos) {
-            window.draw(cuchillo.forma);
-        }
-        for (auto& cuchillo : jugador2->cuchillos) {
-            window.draw(cuchillo.forma);
-        }
+    jugador1->drawEnergiaBar(window, sf::Vector2f(25.0f, 75.0f));
+    jugador2->drawEnergiaBar(window, sf::Vector2f(575.0f, 75.0f));
 
-        window.display();
+    // Dibuja los cuchillos de ambos jugadores
+    for (auto& cuchillo : jugador1->cuchillos) {
+        window.draw(cuchillo.forma);
     }
+    for (auto& cuchillo : jugador2->cuchillos) {
+        window.draw(cuchillo.forma);
+    }
+
+    // Dibuja las ultimates de Hanzo
+    for (const auto& ultimate : static_cast<Hanzo*>(jugador1)->ultimates) {
+        window.draw(ultimate);
+    }
+
+    window.display();
+}
 };
 
 
@@ -307,6 +429,6 @@ private:
 int main() {
     Juego juego;
     juego.ejecutar();
-
+    
     return 0;
 }
