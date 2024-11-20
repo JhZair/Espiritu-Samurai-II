@@ -19,6 +19,9 @@ public:
     float maxhealth;
     float health;
     int lives;
+    bool isDefending;
+    float velocidadNormal;
+    float velocidadReducida;
     bool reapareciendo;
     float retroceso_x;
     float retroceso_y;
@@ -29,7 +32,7 @@ public:
     Luchador(float x, float y, sf::Color color);
     virtual ~Luchador() = default;
     virtual void lanzarCuchillo();
-    virtual void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY);
+    virtual void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa);
     void recibirAtaque(float damage, sf::Vector2f retroceso);
     void actualizarCuchillos(float tiempoDelta);
     void drawHealthBar(sf::RenderWindow& window, sf::Vector2f position);

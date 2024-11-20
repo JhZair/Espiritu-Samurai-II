@@ -3,7 +3,7 @@
 
 Samurai::Samurai(float x, float y, sf::Color color) : Luchador(x, y, color), remainingJumps(45) {}
 
-void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY)
+void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa)
 {
     if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0)
     {
@@ -25,7 +25,13 @@ void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard:
         velocityY = jumpStrength;
         remainingJumps--;
     }
-
+    if (sf::Keyboard::isKeyPressed(defensa)) {
+        isDefending = true;
+        velocidad = velocidadReducida;
+    } else {
+        isDefending = false;
+        velocidad = velocidadNormal;
+    }
     rectan.move(0.0f, velocityY * tiempoDelta);
     hitbox.setPosition(rectan.getPosition()); // Actualizar la posición de la hitbox
 

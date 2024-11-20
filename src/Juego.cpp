@@ -27,13 +27,13 @@ void Juego::reiniciarJugadores()
 
 void Juego::manejarAtaques(const sf::Event &event)
 {
-    if (event.key.code == sf::Keyboard::R && jugador1->hitbox.getGlobalBounds().intersects(jugador2->rectan.getGlobalBounds()))
+    if (event.key.code == sf::Keyboard::R && jugador1->hitbox.getGlobalBounds().intersects(jugador2->rectan.getGlobalBounds()) && !jugador1->isDefending)
     {
         float direccion = (jugador1->rectan.getPosition().x < jugador2->rectan.getPosition().x) ? 1.0f : -1.0f;
         jugador2->recibirAtaque(20.0f, sf::Vector2f(direccion * 150.0f, -150.0f));
         verificarDerrota(jugador2, "Jugador 1");
     }
-    if (event.key.code == sf::Keyboard::P && jugador2->hitbox.getGlobalBounds().intersects(jugador1->rectan.getGlobalBounds()))
+    if (event.key.code == sf::Keyboard::P && jugador2->hitbox.getGlobalBounds().intersects(jugador1->rectan.getGlobalBounds()) && !jugador2->isDefending)
     {
         float direccion = (jugador2->rectan.getPosition().x < jugador1->rectan.getPosition().x) ? 1.0f : -1.0f;
         jugador1->recibirAtaque(20.0f, sf::Vector2f(direccion * 150.0f, -150.0f));
@@ -43,11 +43,11 @@ void Juego::manejarAtaques(const sf::Event &event)
 
 void Juego::manejarProyectiles(const sf::Event &event)
 {
-    if (event.key.code == sf::Keyboard::Q)
+    if (event.key.code == sf::Keyboard::Q && !jugador1->isDefending)
     {
         jugador1->lanzarCuchillo();
     }
-    if (event.key.code == sf::Keyboard::O)
+    if (event.key.code == sf::Keyboard::O && !jugador2->isDefending)
     {
         jugador2->lanzarCuchillo();
     }
@@ -58,8 +58,8 @@ void Juego::actualizar()
 {
     tiempoDelta = relojMov.restart().asSeconds();
     // Actualizar movimiento de jugadores
-    jugador1->move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y);
-    jugador2->move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y);
+    jugador1->move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.rectan.getPosition().y, sf::Keyboard::S);
+    jugador2->move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.rectan.getPosition().y, sf::Keyboard::Down);
 
     jugador1->setPosition(jugador1->rectan.getPosition().x,jugador1->rectan.getPosition().y);
     jugador1->updateAnimation(tiempoDelta);

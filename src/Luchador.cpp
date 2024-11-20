@@ -4,7 +4,8 @@
 #include <vector>
 
 Luchador::Luchador(float x, float y, sf::Color color) : velocidad(200.0f), gravity(1100.5f), velocityY(0), jumpStrength(-480.0f),
-                                                        isJumping(false), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f), retroceso_y(0.0f), reapareciendo(false)
+                                                        isJumping(false), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f),
+                                                        retroceso_y(0.0f), reapareciendo(false), isDefending(false), velocidadNormal(200.0f), velocidadReducida(50.0f)
 {
     rectan.setSize(sf::Vector2f(50.0f, 100.0f));
     rectan.setPosition(x, y);
@@ -25,7 +26,7 @@ void Luchador::lanzarCuchillo()
     }
 }
 
-void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY)
+void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa)
 {
     if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0)
     {
@@ -39,11 +40,17 @@ void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard
     {
         velocityY += gravity * tiempoDelta;
     }
-
     if (sf::Keyboard::isKeyPressed(up) && !isJumping)
     {
         velocityY = jumpStrength;
         isJumping = true;
+    }
+    if (sf::Keyboard::isKeyPressed(defensa)) {
+        isDefending = true;
+        velocidad = velocidadReducida;
+    } else {
+        isDefending = false;
+        velocidad = velocidadNormal;
     }
 
     rectan.move(0.0f, velocityY * tiempoDelta);
@@ -68,11 +75,17 @@ void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard
 }
 
 void Luchador::recibirAtaque(float damage, sf::Vector2f retroceso)
-{
+{   
+    if (isDefending) {
+        damage /= 2;
+        retroceso_x = retroceso.x * 2.0f;
+        retroceso_y = retroceso.y * 3.0f;
+    }else
+    {
+        retroceso_x = retroceso.x * 6.0f;
+        retroceso_y = retroceso.y * 5.0f;    
+    }
     health -= damage;
-    // Escalar el retroceso para hacerlo más perceptible
-    retroceso_x = retroceso.x * 5.0f; // Ajusta el factor según sea necesario
-    retroceso_y = retroceso.y * 5.0f; // Aumenta la escala en Y para más elevación
     isJumping = true;
     if (health <= 0) {
         health = maxhealth;
