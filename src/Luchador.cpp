@@ -21,11 +21,11 @@ Luchador::Luchador(float x, float y, sf::Color color) :
 
 void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa)
 {
-    if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0)
+    if (sf::Keyboard::isKeyPressed(izquierda))
     {
         rectan.move(-velocidad * tiempoDelta, 0.0f);
     }
-    if (sf::Keyboard::isKeyPressed(derecha) && rectan.getPosition().x < 750)
+    if (sf::Keyboard::isKeyPressed(derecha))
     {
         rectan.move(velocidad * tiempoDelta, 0.0f);
     }
@@ -110,7 +110,7 @@ void Luchador::actualizarShurikens(float tiempoDelta, float direccion, Luchador&
     for (auto &shuriken : shurikens)
     {
         shuriken.mover(tiempoDelta, direccion);
-        if(shuriken.forma.getGlobalBounds().intersects(oponente.rectan.getGlobalBounds())){
+        if(shuriken.getForma().getGlobalBounds().intersects(oponente.rectan.getGlobalBounds())){
             oponente.recibirAtaque(0.4f, sf::Vector2f(direccion * 15.0f, -50.0f));
         }
     }
