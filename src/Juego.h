@@ -30,6 +30,9 @@ private:
     float inicioTiempo;
     bool animationsInitialized;
 
+    float direccion1;
+    float direccion2;
+
     void procesarEventos();
     void actualizar();
     void renderizar();

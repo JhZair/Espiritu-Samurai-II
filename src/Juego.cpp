@@ -29,15 +29,25 @@ void Juego::manejarAtaques(const sf::Event &event)
 {
     if (event.key.code == sf::Keyboard::R && jugador1->hitbox.getGlobalBounds().intersects(jugador2->rectan.getGlobalBounds()) && !jugador1->isDefending)
     {
-        float direccion = (jugador1->rectan.getPosition().x < jugador2->rectan.getPosition().x) ? 1.0f : -1.0f;
-        jugador2->recibirAtaque(20.0f, sf::Vector2f(direccion * 150.0f, -150.0f));
+        jugador2->recibirAtaque(15.0f, sf::Vector2f(direccion1 * 160.0f, -150.0f));
+        jugador1->aumentarEnergia(8.0f);
         verificarDerrota(jugador2, "Jugador 1");
     }
     if (event.key.code == sf::Keyboard::P && jugador2->hitbox.getGlobalBounds().intersects(jugador1->rectan.getGlobalBounds()) && !jugador2->isDefending)
     {
-        float direccion = (jugador2->rectan.getPosition().x < jugador1->rectan.getPosition().x) ? 1.0f : -1.0f;
-        jugador1->recibirAtaque(20.0f, sf::Vector2f(direccion * 150.0f, -150.0f));
+        jugador1->recibirAtaque(15.0f, sf::Vector2f(direccion2 * 175.0f, -150.0f));
+        jugador2->aumentarEnergia(10.0f);
         verificarDerrota(jugador1, "Jugador 2");
+    }
+    if (event.key.code == sf::Keyboard::T  && jugador1->energia==100 && !jugador1->isDefending)
+    {
+        jugador1->usarUltimate(*jugador2);
+        jugador2->recibirAtaque(50.0f, sf::Vector2f(direccion1 * 250.0f, -200.0f));
+        verificarDerrota(jugador2, "Jugador 1");
+    }
+    if (event.key.code == sf::Keyboard::I && jugador2->energia==100)
+    {
+        jugador2->usarUltimate(*jugador1);
     }
 }
 
@@ -53,7 +63,6 @@ void Juego::manejarProyectiles(const sf::Event &event)
     }
 }
 
-
 void Juego::actualizar()
 {
     tiempoDelta = relojMov.restart().asSeconds();
@@ -63,6 +72,9 @@ void Juego::actualizar()
 
     jugador1->setPosition(jugador1->rectan.getPosition().x,jugador1->rectan.getPosition().y);
     jugador1->updateAnimation(tiempoDelta);
+
+    static_cast<Hanzo*>(jugador1)->actualizarUltimates(tiempoDelta, direccion1); // Actualiza las ultimates de Hanzo
+
 
     // Actualizar proyectiles
     jugador1->actualizarCuchillos(tiempoDelta);
@@ -107,7 +119,6 @@ float Juego::calcularTiempoRestante()
 {
     return tiempoPartida - (reloj.getElapsedTime().asSeconds() - inicioTiempo);
 }
-
 
 void Juego::determinarGanador()
 {
@@ -169,6 +180,8 @@ void Juego::procesarEventos()
 
         if (event.type == sf::Event::KeyPressed)
         {
+            direccion1 = (jugador1->rectan.getPosition().x < jugador2->rectan.getPosition().x) ? 1.0f : -1.0f;
+            direccion2 = (jugador2->rectan.getPosition().x < jugador1->rectan.getPosition().x) ? 1.0f : -1.0f;
             manejarAtaques(event);
             manejarProyectiles(event);
         }
@@ -196,6 +209,9 @@ void Juego::renderizar()
     jugador1->drawHealthBar(window, sf::Vector2f(25.0f, 50.0f));
     jugador2->drawHealthBar(window, sf::Vector2f(575.0f, 50.0f));
 
+    jugador1->drawEnergiaBar(window, sf::Vector2f(25.0f, 75.0f));
+    jugador2->drawEnergiaBar(window, sf::Vector2f(575.0f, 75.0f));
+
     // Dibujar proyectiles
     for (auto &cuchillo : jugador1->cuchillos)
     {
@@ -204,6 +220,10 @@ void Juego::renderizar()
     for (auto &cuchillo : jugador2->cuchillos)
     {
         window.draw(cuchillo.forma);
+    }
+    for (const auto& ultimate : static_cast<Hanzo*>(jugador1)->ultimates) 
+    {
+        window.draw(ultimate);
     }
 
     dibujarTiempoRestante();

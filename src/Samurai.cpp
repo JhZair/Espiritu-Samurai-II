@@ -1,5 +1,6 @@
 #include "Samurai.h"
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 Samurai::Samurai(float x, float y, sf::Color color) : Luchador(x, y, color), remainingJumps(45) {}
 
@@ -52,4 +53,12 @@ void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard:
         remainingJumps = 45;
         retroceso_y = 0.0f;
     }
+}
+
+void Samurai::usarUltimate(Luchador& oponente) {
+    health += maxhealth * 0.55f;
+    if (health > maxhealth) {
+        health = maxhealth;  // No exceder la salud máxima
+    }
+    energia = 0.0f;
 }

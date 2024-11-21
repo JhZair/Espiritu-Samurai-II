@@ -19,6 +19,7 @@ public:
     float maxhealth;
     float health;
     int lives;
+    float energia;
     bool isDefending;
     float velocidadNormal;
     float velocidadReducida;
@@ -33,10 +34,13 @@ public:
     virtual ~Luchador() = default;
     virtual void lanzarCuchillo();
     virtual void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa);
+    virtual void usarUltimate(Luchador& oponente);
     void recibirAtaque(float damage, sf::Vector2f retroceso);
-    void actualizarCuchillos(float tiempoDelta);
-    void drawHealthBar(sf::RenderWindow& window, sf::Vector2f position);
     void reducirVidas(sf::Vector2f posicionInicial);
+    void actualizarCuchillos(float tiempoDelta);
+    void aumentarEnergia(float cantidad);
+    void drawHealthBar(sf::RenderWindow& window, sf::Vector2f position);
+    void drawEnergiaBar(sf::RenderWindow& window, sf::Vector2f position);    
 };
 
 #endif
