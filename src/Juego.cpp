@@ -153,20 +153,22 @@ void Juego::inicializarAnimaciones() {
     }
 }
 
-void Juego::ejecutar()
-{
-    while (window.isOpen())
-    {
-        procesarEventos();
-        actualizar();
-        renderizar();
+void Juego::ejecutar(){   
+    Menu menu;
+    menu.run_menu();  // Ejecutar el menú
 
-        // Verificar si el tiempo ha terminado
-        if (calcularTiempoRestante() <= 0)
-        {
-            determinarGanador();
-            break;
+    if (menu.state == Menu::GameState::Game) {  // Si el jugador selecciono "Jugar"
+        while (window.isOpen()) {
+            procesarEventos();
+            actualizar();
+            renderizar();
+            if (calcularTiempoRestante() <= 0) {
+                determinarGanador();
+                break;
+            }
         }
+    } else if (menu.state == Menu::GameState::Controls) { 
+        menu.showControls();
     }
 }
 

@@ -86,7 +86,7 @@ void Juego::dibujarTiempoRestante()
     int segundos = static_cast<int>(tiempoRestante) % 60;
 
     sf::Font fuente;
-    if (!fuente.loadFromFile("assets/fonts/upheavtt.ttf")) // Ajusta la ruta si es necesario
+    if (!fuente.loadFromFile("../assets/fonts/upheavtt.ttf")) // Ajusta la ruta si es necesario
     {
         std::cerr << "Error cargando la fuente." << std::endl;
         return;
@@ -129,7 +129,7 @@ void Juego::determinarGanador()
 
 void Juego::inicializarAnimaciones() {
         if (!animationsInitialized) {
-        if (jugador1->CargarTexture("assets/anims/hanzo/Idle_Hanzo.png")) {
+        if (jugador1->CargarTexture("../assets/anims/hanzo/Idle_Hanzo.png")) {
             jugador1->setTransparentColor(sf::Color(64, 176, 72));
             jugador1->IniciarAnimation(100, 118, 10, 0.1f, true);
             jugador1->playAnimation();  // Aseguramos que la animación está activa

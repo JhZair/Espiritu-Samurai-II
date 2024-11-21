@@ -7,6 +7,7 @@
 #include "Samurai.h"
 #include "Piso.h"
 #include "Animaciones.h"
+#include "Menu.h"
 
 class Juego
 {
@@ -46,6 +47,15 @@ private:
     void determinarGanador();
     void dibujarTiempoRestante();
     float calcularTiempoRestante();
+
+    enum class EstadoJuego {
+        Menu,
+        Juego,
+        Salir
+    };
+
+    EstadoJuego estadoActual;
+    Menu* menu;
 };
 
 #endif

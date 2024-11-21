@@ -25,7 +25,7 @@ public:
     }
 
     void set_values() {
-        if (!font.loadFromFile("assets/fonts/upheavtt.ttf")) {
+        if (!font.loadFromFile("../assets/fonts/upheavtt.ttf")) {
             std::cerr << "Error loading font!" << std::endl;
             exit(-1);
         }
@@ -42,7 +42,7 @@ public:
         player.setPosition(600.f, 360.f);  // Posición inicial
 
         // Cargar el fondo del juego
-        if (!gameBackground.loadFromFile("assets/images/Fondo_menu/img (1).jpg")) {
+        if (!gameBackground.loadFromFile("../assets/images/Fondo_menu/img (1).jpg")) {
             std::cerr << "Error loading game background!" << std::endl;
             std::cerr << "Please check if the file path is correct." << std::endl;
             exit(-1);
