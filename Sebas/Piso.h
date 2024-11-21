@@ -2,7 +2,7 @@
 #define PISO_H
 
 #include <SFML/Graphics.hpp>
-#include "Animaciones.h"
+
 class Piso {
 public:
     sf::RectangleShape rectan;
