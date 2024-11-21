@@ -3,13 +3,13 @@
 
 #include <SFML/Graphics.hpp>
 
-class Cuchillo
+class Shuriken
 {
 public:
     sf::RectangleShape forma;
     float velocidad;
 
-    Cuchillo(float x, float y);
+    Shuriken(float x, float y);
 
     void mover(float tiempoDelta);
 

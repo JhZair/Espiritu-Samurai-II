@@ -4,12 +4,12 @@
 
 Hanzo::Hanzo(float x, float y, sf::Color color) : Luchador(x, y, color) {}
 
-void Hanzo::lanzarCuchillo() {
+void Hanzo::lanzarShurikens() {
     if (clock.getElapsedTime().asSeconds() >= 2) {
-        Cuchillo cuchillo1(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 3);
-        Cuchillo cuchillo2(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + 2 * rectan.getSize().y / 3);
-        cuchillos.push_back(cuchillo1);
-        cuchillos.push_back(cuchillo2);
+        Shuriken shuriken1(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 3);
+        Shuriken shuriken2(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + 2 * rectan.getSize().y / 3);
+        shurikens.push_back(shuriken1);
+        shurikens.push_back(shuriken2);
         clock.restart();
     }
 }

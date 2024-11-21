@@ -2,15 +2,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-Samurai::Samurai(float x, float y, sf::Color color) : Luchador(x, y, color), remainingJumps(45) {}
+Samurai::Samurai(float x, float y, sf::Color color) : Luchador(x, y, color), remainingJumps(25) {}
 
 void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa)
 {
-    if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0)
+    if (sf::Keyboard::isKeyPressed(izquierda))
     {
         rectan.move(-velocidad * tiempoDelta, 0.0f);
     }
-    if (sf::Keyboard::isKeyPressed(derecha) && rectan.getPosition().x < 750)
+    if (sf::Keyboard::isKeyPressed(derecha))
     {
         rectan.move(velocidad * tiempoDelta, 0.0f);
     }
@@ -50,7 +50,7 @@ void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard:
         rectan.setPosition(rectan.getPosition().x, pisoY - rectan.getSize().y);
         velocityY = 0;
         isJumping = false;
-        remainingJumps = 45;
+        remainingJumps = 25;
         retroceso_y = 0.0f;
     }
 }

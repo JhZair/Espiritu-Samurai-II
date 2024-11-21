@@ -96,25 +96,28 @@ void Luchador::reducirVidas(sf::Vector2f posicionInicial)
     retroceso_y = 0.0f;
 }
 
-void Luchador::lanzarCuchillo()
+void Luchador::lanzarShurikens()
 {
     if (clock.getElapsedTime().asSeconds() >= 2) {
-        Cuchillo cuchillo(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
-        cuchillos.push_back(cuchillo);
+        Shuriken shuriken(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
+        shurikens.push_back(shuriken);
         clock.restart();
     }
 }
 
-void Luchador::actualizarCuchillos(float tiempoDelta)
+void Luchador::actualizarShurikens(float tiempoDelta, float direccion, Luchador& oponente)
 {
-    for (auto &cuchillo : cuchillos)
+    for (auto &shuriken : shurikens)
     {
-        cuchillo.mover(tiempoDelta);
+        shuriken.mover(tiempoDelta, direccion);
+        if(shuriken.forma.getGlobalBounds().intersects(oponente.rectan.getGlobalBounds())){
+            oponente.recibirAtaque(0.4f, sf::Vector2f(direccion * 15.0f, -50.0f));
+        }
     }
-    cuchillos.erase(
-        std::remove_if(cuchillos.begin(), cuchillos.end(), [](Cuchillo &cuchillo)
-                       { return cuchillo.getPosicion().x > 800; }),
-        cuchillos.end());
+    shurikens.erase(
+        std::remove_if(shurikens.begin(), shurikens.end(), [](Shuriken &shuriken)
+                       { return shuriken.getPosicion().x > 800; }),
+        shurikens.end());
 }
 
 void Luchador::aumentarEnergia(float cantidad) {
@@ -124,9 +127,8 @@ void Luchador::aumentarEnergia(float cantidad) {
 }
 
 void Luchador::usarUltimate(Luchador& oponente) {
-    if (energia == 100.0f) {  // Solo si la energía está llena
-        std::cout << "Ultimate activada pero no definida para este luchador." << std::endl;
-        energia = 0.0f;  // Restablece la energía después de usar la ultimate
+    if (energia == 100.0f) { 
+        energia = 0.0f;
     }
 }
 void Luchador::drawHealthBar(sf::RenderWindow &window, sf::Vector2f position)

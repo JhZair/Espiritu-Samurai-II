@@ -18,8 +18,8 @@ Luchador::Luchador(float x, float y, sf::Color color) :  Animacion(), velocidad(
 
 void Luchador::lanzarCuchillo()
 {
-    Cuchillo cuchillo(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
-    cuchillos.push_back(cuchillo);
+    Shuriken cuchillo(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
+    shurikens.push_back(cuchillo);
 }
 
 void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY)
@@ -67,15 +67,15 @@ void Luchador::recibirAtaque(float damage)
 
 void Luchador::actualizarCuchillos(float tiempoDelta)
 {
-    for (auto &cuchillo : cuchillos)
+    for (auto &cuchillo : shurikens)
     {
         cuchillo.mover(tiempoDelta);
     }
 
-    cuchillos.erase(
-        std::remove_if(cuchillos.begin(), cuchillos.end(), [](Cuchillo &cuchillo)
+    shurikens.erase(
+        std::remove_if(shurikens.begin(), shurikens.end(), [](Shuriken &cuchillo)
                        { return cuchillo.getPosicion().x > 800; }),
-        cuchillos.end());
+        shurikens.end());
 }
 
 void Luchador::drawHealthBar(sf::RenderWindow &window, sf::Vector2f position)

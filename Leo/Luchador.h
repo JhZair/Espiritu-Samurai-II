@@ -19,7 +19,7 @@ public:
     float health;
     int lives;
     sf::Clock clock;
-    std::vector<Cuchillo> cuchillos;
+    std::vector<Shuriken> shurikens;
 
     Luchador(float x, float y, sf::Color color);
     virtual ~Luchador() = default;

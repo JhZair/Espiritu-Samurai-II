@@ -7,12 +7,12 @@
 #include <vector>
 #include <iostream> 
 
-class Cuchillo {
+class Shuriken {
 public:
     sf::RectangleShape forma;
     float velocidad = 500.0f;
 
-    Cuchillo(float x, float y) {
+    Shuriken(float x, float y) {
         forma.setSize(sf::Vector2f(30.0f, 5.0f));
         forma.setPosition(x, y);
         forma.setFillColor(sf::Color::White);
@@ -41,7 +41,7 @@ public:
     float health = maxhealth;
     int lives = 2;
     sf::Clock clock;
-    std::vector<Cuchillo> cuchillos;
+    std::vector<Shuriken> shurikens;
 
     Luchador(float x, float y, sf::Color color) {
         rectan.setSize(sf::Vector2f(50.0f, 100.0f));
@@ -67,8 +67,8 @@ public:
     virtual void lanzarCuchillo() {
     // Crea un nuevo cuchillo en la posición actual del jugador
     if (clock.getElapsedTime().asSeconds() >= 2) {
-        Cuchillo cuchillo(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
-        cuchillos.push_back(cuchillo);
+        Shuriken cuchillo(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
+        shurikens.push_back(cuchillo);
         clock.restart(); // Reinicia el reloj para medir el tiempo nuevamente
     }
 }
@@ -115,13 +115,13 @@ public:
 
 
     void actualizarCuchillos(float tiempoDelta) {
-        for (auto& cuchillo : cuchillos) {
+        for (auto& cuchillo : shurikens) {
             cuchillo.mover(tiempoDelta);
         }
         
-        cuchillos.erase(
-            std::remove_if(cuchillos.begin(), cuchillos.end(), [](Cuchillo& cuchillo) { return cuchillo.getPosicion().x > 800; }),
-            cuchillos.end()
+        shurikens.erase(
+            std::remove_if(shurikens.begin(), shurikens.end(), [](Shuriken& cuchillo) { return cuchillo.getPosicion().x > 800; }),
+            shurikens.end()
         );
     }
 
@@ -173,10 +173,10 @@ public:
 
     void lanzarCuchillo() override {
         if (clock.getElapsedTime().asSeconds() >= 2) {
-            Cuchillo cuchillo1(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 3);
-            Cuchillo cuchillo2(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + 2 * rectan.getSize().y / 3);
-            cuchillos.push_back(cuchillo1);
-            cuchillos.push_back(cuchillo2);
+            Shuriken cuchillo1(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 3);
+            Shuriken cuchillo2(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + 2 * rectan.getSize().y / 3);
+            shurikens.push_back(cuchillo1);
+            shurikens.push_back(cuchillo2);
             clock.restart();
         }
     }
@@ -406,10 +406,10 @@ private:
     jugador2->drawEnergiaBar(window, sf::Vector2f(575.0f, 75.0f));
 
     // Dibuja los cuchillos de ambos jugadores
-    for (auto& cuchillo : jugador1->cuchillos) {
+    for (auto& cuchillo : jugador1->shurikens) {
         window.draw(cuchillo.forma);
     }
-    for (auto& cuchillo : jugador2->cuchillos) {
+    for (auto& cuchillo : jugador2->shurikens) {
         window.draw(cuchillo.forma);
     }
 

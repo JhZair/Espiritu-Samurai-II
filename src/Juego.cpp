@@ -55,11 +55,13 @@ void Juego::manejarProyectiles(const sf::Event &event)
 {
     if (event.key.code == sf::Keyboard::Q && !jugador1->isDefending)
     {
-        jugador1->lanzarCuchillo();
+        jugador1->lanzarShurikens();
+        verificarDerrota(jugador2, "Jugador 1");
     }
     if (event.key.code == sf::Keyboard::O && !jugador2->isDefending)
     {
-        jugador2->lanzarCuchillo();
+        jugador2->lanzarShurikens();
+        verificarDerrota(jugador1, "Jugador 2");
     }
 }
 
@@ -77,8 +79,8 @@ void Juego::actualizar()
 
 
     // Actualizar proyectiles
-    jugador1->actualizarCuchillos(tiempoDelta);
-    jugador2->actualizarCuchillos(tiempoDelta);
+    jugador1->actualizarShurikens(tiempoDelta, direccion1, *jugador2);
+    jugador2->actualizarShurikens(tiempoDelta, direccion2, *jugador1);
 }
 
 void Juego::verificarDerrota(Luchador *jugador, const std::string &ganador)
@@ -213,13 +215,13 @@ void Juego::renderizar()
     jugador2->drawEnergiaBar(window, sf::Vector2f(575.0f, 75.0f));
 
     // Dibujar proyectiles
-    for (auto &cuchillo : jugador1->cuchillos)
+    for (auto &shuriken : jugador1->shurikens)
     {
-        window.draw(cuchillo.forma);
+        window.draw(shuriken.forma);
     }
-    for (auto &cuchillo : jugador2->cuchillos)
+    for (auto &shuriken : jugador2->shurikens)
     {
-        window.draw(cuchillo.forma);
+        window.draw(shuriken.forma);
     }
     for (const auto& ultimate : static_cast<Hanzo*>(jugador1)->ultimates) 
     {

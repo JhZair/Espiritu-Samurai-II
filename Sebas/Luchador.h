@@ -21,7 +21,7 @@ public:
     int lives;
     
 
-    std::vector<Cuchillo> cuchillos;
+    std::vector<Shuriken> shurikens;
 
 
     Luchador(float x, float y, sf::Color color);

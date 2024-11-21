@@ -1,5 +1,5 @@
-#ifndef CUCHILLO_H
-#define CUCHILLO_H
+#ifndef SHURIKEN_H
+#define SHURIKEN_H
 
 #include <SFML/Graphics.hpp>
 
@@ -11,7 +11,7 @@ public:
 
     Shuriken(float x, float y);
 
-    void mover(float tiempoDelta);
+    void mover(float tiempoDelta, float direccion);
 
     sf::Vector2f getPosicion();
 };

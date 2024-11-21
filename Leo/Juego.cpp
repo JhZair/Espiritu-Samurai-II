@@ -89,11 +89,11 @@ void Juego::renderizar()
     jugador1->drawHealthBar(window, sf::Vector2f(25.0f, 50.0f));
     jugador2->drawHealthBar(window, sf::Vector2f(575.0f, 50.0f));
 
-    for (auto &cuchillo : jugador1->cuchillos)
+    for (auto &cuchillo : jugador1->shurikens)
     {
         window.draw(cuchillo.forma);
     }
-    for (auto &cuchillo : jugador2->cuchillos)
+    for (auto &cuchillo : jugador2->shurikens)
     {
         window.draw(cuchillo.forma);
     }
