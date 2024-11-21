@@ -1,6 +1,6 @@
 #include "Animaciones.h"
 #include <iostream>
-Animación::Animación() : 
+Animacion::Animacion() : 
     currentFrame(0),
     frameCount(0),
     frameTime(0.1f),
@@ -11,9 +11,9 @@ Animación::Animación() :
     isPlaying(true)
 {
 }
-Animación::~Animación(){}
+Animacion::~Animacion(){}
 
-bool Animación::CargarTexture(const std::string& texturePath) {
+bool Animacion::CargarTexture(const std::string& texturePath) {
     if (!spriteSheet.loadFromFile(texturePath)) {
         
         return false;
@@ -23,14 +23,14 @@ bool Animación::CargarTexture(const std::string& texturePath) {
     return true;
 }
 
-void Animación::setTransparentColor(sf::Color color) {
+void Animacion::setTransparentColor(sf::Color color) {
     sf::Image spriteImage = spriteSheet.copyToImage();
     spriteImage.createMaskFromColor(color);
     spriteSheet.loadFromImage(spriteImage);
     setTexture(spriteSheet);
 }
 
-void Animación::IniciarAnimation(int width, int height, int numFrames, float frameDuration, bool shouldLoop) {
+void Animacion::IniciarAnimation(int width, int height, int numFrames, float frameDuration, bool shouldLoop) {
     frameWidth = width;
     frameHeight = height;
     frameCount = numFrames;
@@ -45,7 +45,7 @@ void Animación::IniciarAnimation(int width, int height, int numFrames, float fr
     currentTime = 0;
 }
 
-void Animación::updateAnimation(float deltaTime) {
+void Animacion::updateAnimation(float deltaTime) {
     if (!isPlaying || frameCount <= 1) return;
     
     currentTime += deltaTime;
@@ -70,16 +70,16 @@ void Animación::updateAnimation(float deltaTime) {
     }
 }
 
-// void Animación::resetAnimation() {
+// void Animacion::resetAnimation() {
 //     currentFrame = 0;
 //     currentTime = 0;
 //     frameRect.left = 0;
 //     setTextureRect(frameRect);
 // }
-void Animación::draw(sf::RenderWindow& window) {
+void Animacion::draw(sf::RenderWindow& window) {
     window.draw(*this);  // Dibuja el sprite con la animación
 }
-void Animación::setPosition(float x , float y)
+void Animacion::setPosition(float x , float y)
 {
     sf::Sprite::setPosition(x, y);
 }

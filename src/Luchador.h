@@ -6,7 +6,7 @@
 #include "Animaciones.h"
 #include <vector>
 
-class Luchador : public Animación
+class Luchador : public Animacion
 {
 public:
     sf::RectangleShape rectan;
