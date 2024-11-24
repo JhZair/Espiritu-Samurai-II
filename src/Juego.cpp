@@ -21,8 +21,9 @@ Juego::~Juego()
 void Juego::reiniciarJugadores()
 {
     jugador1 = new Hanzo(175.0f, 450.0f, sf::Color::Yellow);
+    jugador1->cargarAnimaciones();
     jugador2 = new Samurai(375.0f, 450.0f, sf::Color::Red);
-    inicializarAnimaciones();
+    jugador2->cargarAnimaciones();
 }
 
 void Juego::manejarAtaques(const sf::Event &event)
@@ -69,11 +70,32 @@ void Juego::actualizar()
 {
     tiempoDelta = relojMov.restart().asSeconds();
     // Actualizar movimiento de jugadores
-    jugador1->move(tiempoDelta, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::W, piso.getRectan().getPosition().y, sf::Keyboard::S);
-    jugador2->move(tiempoDelta, sf::Keyboard::Left, sf::Keyboard::Right, sf::Keyboard::Up, piso.getRectan().getPosition().y, sf::Keyboard::Down);
-
-    jugador1->setPosition(jugador1->getRectan().getPosition().x,jugador1->getRectan().getPosition().y);
-    jugador1->updateAnimation(tiempoDelta);
+    jugador1->move(
+    tiempoDelta, 
+    sf::Keyboard::A, // Tecla para moverse a la izquierda
+    sf::Keyboard::D, // Tecla para moverse a la derecha
+    sf::Keyboard::W, // Tecla para saltar
+    piso.getRectan().getPosition().y, // Posición del piso
+    sf::Keyboard::S, // Tecla para defensa
+    sf::Keyboard::R, // Tecla para ataque básico
+    sf::Keyboard::T, // Tecla para ataque especial
+    sf::Keyboard::Q, // Tecla para ataque de proyectiles
+    *jugador2,         // Referencia al oponente
+    direccion1
+);
+    jugador2->move(
+    tiempoDelta, 
+    sf::Keyboard::Left,   // Tecla para moverse a la izquierda
+    sf::Keyboard::Right,  // Tecla para moverse a la derecha
+    sf::Keyboard::Up,     // Tecla para saltar
+    piso.getRectan().getPosition().y, // Posición del piso
+    sf::Keyboard::Down,   // Tecla para defensa
+    sf::Keyboard::P,   // Tecla para ataque básico
+    sf::Keyboard::I,   // Tecla para ataque especial
+    sf::Keyboard::O,   // Tecla para ataque de proyectiles
+    *jugador1,             // Referencia al oponente
+    direccion2
+);
 
     static_cast<Hanzo*>(jugador1)->actualizarUltimates(tiempoDelta, direccion1); // Actualiza las ultimates de Hanzo
 
@@ -139,20 +161,6 @@ void Juego::determinarGanador()
     window.close();
 }
 
-void Juego::inicializarAnimaciones() {
-        if (!animationsInitialized) {
-        if (jugador1->CargarTexture("../assets/anims/hanzo/Idle_Hanzo.png")) {
-            jugador1->setTransparentColor(sf::Color(64, 176, 72));
-            jugador1->IniciarAnimation(100, 118, 10, 0.1f, true);
-            jugador1->playAnimation();  // Aseguramos que la animación está activa
-            animationsInitialized = true;
-            std::cout << "Animación inicializada correctamente" << std::endl;
-        } else {
-            std::cerr << "Error al cargar la textura de la animación!" << std::endl;
-        }
-    }
-}
-
 void Juego::ejecutar(){   
     Menu menu;
     menu.run_menu();  // Ejecutar el menú
@@ -201,9 +209,10 @@ void Juego::renderizar()
 
     // Dibujar jugadores
     // window.draw(jugador1->getRectan());
-    window.draw(jugador2->getRectan());
+    // window.draw(jugador2->getRectan());
 
-    jugador1->draw(window);
+    jugador1->dibujar(window, direccion1);
+    jugador2->dibujar(window, direccion2);
 
     // Dibujar hitboxes (opcional, para depuración)
     // window.draw(jugador1->getHitbox());

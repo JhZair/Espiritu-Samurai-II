@@ -33,7 +33,7 @@ public:
     Luchador(float x, float y, sf::Color color);
     virtual ~Luchador() = default;
     virtual void lanzarShurikens();
-    virtual void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa);
+    virtual void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, Luchador& otroJugador, float direccion);
     virtual void usarUltimate(Luchador& oponente);
     void recibirAtaque(float damage, sf::Vector2f retroceso);
     void reducirVidas(sf::Vector2f posicionInicial);
@@ -41,6 +41,11 @@ public:
     void aumentarEnergia(float cantidad);
     void drawHealthBar(sf::RenderWindow& window, sf::Vector2f position);
     void drawEnergiaBar(sf::RenderWindow& window, sf::Vector2f position);
+
+    virtual void cargarAnimaciones()= 0;
+    virtual void cambiarAnimacion(const std::string& nuevaAnimacion, float direccion)= 0;
+    virtual void actualizarAnimacion(float direccion)= 0;
+    virtual void dibujar(sf::RenderWindow& window, float direccion)= 0;
 
     // Getters y Setters
     const sf::RectangleShape& getRectan() const { return rectan; }

@@ -19,7 +19,7 @@ Luchador::Luchador(float x, float y, sf::Color color) :
     hitbox.setFillColor(sf::Color(255, 0, 0, 100)); //Cambiar último 0 para ver hitbox
 }
 
-void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa)
+void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, Luchador& otroJugador, float direccion)
 {
     if (sf::Keyboard::isKeyPressed(izquierda))
     {

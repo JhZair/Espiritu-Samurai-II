@@ -2,9 +2,74 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-Samurai::Samurai(float x, float y, sf::Color color) : Luchador(x, y, color), remainingJumps(25) {}
+Samurai::Samurai(float x, float y, sf::Color color) : Luchador(x, y, color), remainingJumps(25), animacionActual("idle"), indiceSprite(0), tiempoEntreSprites(0.13f) {}
 
-void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa)
+void Samurai::cargarAnimaciones() {
+    std::string rutaBase = "../assets/anims/samurai/";
+    animaciones["idle"] = Animacion::cargarSprites(rutaBase + "idle_samurai.png", 10, 107.6, 140, sf::Color(192, 192, 192), false);
+    animaciones["run"] = Animacion::cargarSprites(rutaBase + "caminar_samurai.png", 8, 110, 140, sf::Color(192, 192, 192), false);
+    animaciones["run_b"] = Animacion::cargarSprites(rutaBase + "caminata_atras_samurai.png", 8, 110, 140, sf::Color(192, 192, 192), false);
+    animaciones["jump"] = Animacion::cargarSprites(rutaBase + "salto_samurai.png", 5, 108.2, 140, sf::Color(192, 192, 192), false);
+    animaciones["attack"] = Animacion::cargarSprites(rutaBase + "ataque_samurai.png", 5, 140, 140, sf::Color(192, 192, 192), false);
+    animaciones["attack_s"] = Animacion::cargarSprites(rutaBase + "ataque_especial_samurai.png", 12, 160, 140, sf::Color(192, 192, 192), false);
+    animaciones["defense"] = Animacion::cargarSprites(rutaBase + "bloqueo_samurai.png", 1, 90, 140, sf::Color(192, 192, 192), false);
+    animaciones["hit"] = Animacion::cargarSprites(rutaBase + "dañado_samurai.png", 5, 121.6, 140, sf::Color(192, 192, 192), false);
+    animaciones["shoot"] = Animacion::cargarSprites(rutaBase + "proyectil_samurai.png", 7, 195, 140, sf::Color(192, 192, 192), false);
+    animaciones["intro_vict"] = Animacion::cargarSprites(rutaBase + "victoria_samurai.png", 3, 90, 140, sf::Color(192, 192, 192), false);
+    animaciones["death"] = Animacion::cargarSprites(rutaBase + "muerte_samurai.png", 9, 155, 120, sf::Color(192, 192, 192), false);
+
+    animacionesEspejadas["idle"] = Animacion::cargarSprites(rutaBase + "idle_samurai.png", 10, 107.6, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["run"] = Animacion::cargarSprites(rutaBase + "caminar_samurai.png", 8, 110, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["run_b"] = Animacion::cargarSprites(rutaBase + "caminata_atras_samurai.png", 8, 110, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["jump"] = Animacion::cargarSprites(rutaBase + "salto_samurai.png", 5, 108.2, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["attack"] = Animacion::cargarSprites(rutaBase + "ataque_samurai.png", 5, 140, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["attack_s"] = Animacion::cargarSprites(rutaBase + "ataque_especial_samurai.png", 12, 160, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["defense"] = Animacion::cargarSprites(rutaBase + "bloqueo_samurai.png", 1, 90, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["hit"] = Animacion::cargarSprites(rutaBase + "dañado_samurai.png", 5, 121.6, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["shoot"] = Animacion::cargarSprites(rutaBase + "proyectil_samurai.png", 7, 195, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["intro_vict"] = Animacion::cargarSprites(rutaBase + "victoria_samurai.png", 3, 90, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["death"] = Animacion::cargarSprites(rutaBase + "muerte_samurai.png", 9, 155, 120, sf::Color(192, 192, 192), true);
+}
+
+void Samurai::cambiarAnimacion(const std::string& nuevaAnimacion, float direccion) {
+    if(direccion > 0){
+        if (animaciones.find(nuevaAnimacion) != animaciones.end()) {
+            animacionActual = nuevaAnimacion;
+        }
+    }else{
+         if (animacionesEspejadas.find(nuevaAnimacion) != animacionesEspejadas.end()) {
+            animacionActual = nuevaAnimacion;
+        }
+    indiceSprite = 0; // Reiniciar el índice del sprite
+    relojSprite.restart(); // Reiniciar el temporizador
+    }
+}
+
+void Samurai::actualizarAnimacion(float direccion) {
+    if (relojSprite.getElapsedTime().asSeconds() >= tiempoEntreSprites) {
+        if(direccion > 0) {
+            indiceSprite = (indiceSprite + 1) % animaciones[animacionActual].size(); // Ciclo entre los sprites
+        }else{
+            indiceSprite = (indiceSprite + 1) % animacionesEspejadas[animacionActual].size(); // Ciclo entre los sprites
+        }
+        relojSprite.restart();
+    }
+}
+
+void Samurai::dibujar(sf::RenderWindow& window, float direccion) {
+    actualizarAnimacion(direccion);
+    if(direccion > 0){
+        sf::Sprite& spriteActual = animaciones[animacionActual][indiceSprite];
+        spriteActual.setPosition(rectan.getPosition());
+        window.draw(spriteActual);
+    }else{
+        sf::Sprite& spriteActual = animacionesEspejadas[animacionActual][indiceSprite];
+        spriteActual.setPosition(rectan.getPosition());
+        window.draw(spriteActual);
+    }
+}
+
+void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, Luchador& otroJugador, float direccion)
 {
     if (sf::Keyboard::isKeyPressed(izquierda))
     {

@@ -1,85 +1,70 @@
+#include <SFML/Graphics.hpp>
 #include "Animaciones.h"
 #include <iostream>
-Animacion::Animacion() : 
-    currentFrame(0),
-    frameCount(0),
-    frameTime(0.1f),
-    currentTime(0),
-    loop(true),
-    frameWidth(0),
-    frameHeight(0),
-    isPlaying(true)
-{
-}
-Animacion::~Animacion(){}
+#include <vector>
 
-bool Animacion::CargarTexture(const std::string& texturePath) {
-    if (!spriteSheet.loadFromFile(texturePath)) {
-        
-        return false;
+
+// Método para cargar los sprites desde una hoja de sprites
+std::vector<sf::Sprite> Animacion::cargarSprites(const std::string& rutaHoja, int numSprites, int anchoSprite, int altoSprite, sf::Color colorKey, bool espejo) {
+    std::vector<sf::Sprite> sprites;
+
+    // Crear una textura independiente para esta animación
+    std::unique_ptr<sf::Texture> textura = std::make_unique<sf::Texture>();
+    sf::Image imagen;
+
+    // Cargar la imagen de la hoja de sprites
+    if (!imagen.loadFromFile(rutaHoja)) {
+        std::cerr << "Error: No se pudo cargar la imagen desde " << rutaHoja << std::endl;
+        return sprites;
     }
-    setTexture(spriteSheet);
-    
-    return true;
-}
 
-void Animacion::setTransparentColor(sf::Color color) {
-    sf::Image spriteImage = spriteSheet.copyToImage();
-    spriteImage.createMaskFromColor(color);
-    spriteSheet.loadFromImage(spriteImage);
-    setTexture(spriteSheet);
-}
+    // Configurar el color transparente
+    imagen.createMaskFromColor(colorKey);
 
-void Animacion::IniciarAnimation(int width, int height, int numFrames, float frameDuration, bool shouldLoop) {
-    frameWidth = width;
-    frameHeight = height;
-    frameCount = numFrames;
-    frameTime = frameDuration;
-    loop = shouldLoop;
-    
-    frameRect = sf::IntRect(0, 0, frameWidth, frameHeight);
-    setTextureRect(frameRect);
-    
-    // Resetear la animación
-    currentFrame = 0;
-    currentTime = 0;
-}
+    // Crear una textura a partir de la imagen con transparencia
+    if (!textura->loadFromImage(imagen)) {
+        std::cerr << "Error: No se pudo cargar la textura desde la imagen" << std::endl;
+        return sprites;
+    }
 
-void Animacion::updateAnimation(float deltaTime) {
-    if (!isPlaying || frameCount <= 1) return;
-    
-    currentTime += deltaTime;
-    
-    if (currentTime >= frameTime) {
-        currentTime -= frameTime;  // Restamos el tiempo transcurrido en lugar de ponerlo a 0
-        
-        currentFrame++;
-        if (currentFrame >= frameCount) {
-            if (loop) {
-                currentFrame = 0;
-            } else {
-                currentFrame = frameCount - 1;
-                isPlaying = false;
-                return;
-            }
+    // Crear sprites individuales
+    for (int i = 0; i < numSprites; ++i) {
+        sf::IntRect rect(i * anchoSprite, 0, anchoSprite, altoSprite);
+        sf::Sprite sprite(*textura, rect); // Asocia la textura independiente a cada sprite
+
+        // Espejar si es necesario
+        if (espejo) {
+            sprite.setScale(-1.f, 1.f);
+            sprite.setOrigin(static_cast<float>(anchoSprite), 0.f);
         }
-        
-        // Actualizar el rectángulo de la textura
-        frameRect.left = currentFrame * frameWidth;
-        setTextureRect(frameRect);
+
+        sprites.push_back(sprite);
     }
+
+    // Almacenar la textura para que no sea destruida
+    texturas.push_back(std::move(textura));
+
+    std::cout << "Sprites creados: " << sprites.size() << std::endl;
+    return sprites;
 }
 
-// void Animacion::resetAnimation() {
-//     currentFrame = 0;
-//     currentTime = 0;
-//     frameRect.left = 0;
-//     setTextureRect(frameRect);
-// }
-void Animacion::draw(sf::RenderWindow& window) {
-    window.draw(*this);  // Dibuja el sprite con la animación
+
+
+// Obtener el sprite en un índice específico
+const sf::Sprite& Animacion::getSprite(size_t indice) const {
+    return sprites.at(indice); // Retorna por referencia para evitar copias
 }
-void Animacion::setPosition(float x , float y)
-{
-    sf::Sprite::setPosition(x, y);
+
+// Obtener la cantidad de sprites
+size_t Animacion::getNumSprites() const {
+    return sprites.size();
+}
+
+// Dibujar un sprite específico en una ventana
+void Animacion::dibujarSprite(sf::RenderWindow& ventana, size_t indice, float x, float y) {
+    if (indice < sprites.size()) {
+        sf::Sprite sprite = sprites[indice];
+        sprite.setPosition(x, y);
+        ventana.draw(sprite);
+    }
 }
