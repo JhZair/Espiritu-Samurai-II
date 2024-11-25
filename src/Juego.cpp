@@ -4,7 +4,7 @@
 
 Juego::Juego()
     : window(sf::VideoMode(1920, 1080), "Espíritu Samurai II"), 
-      piso(window.getPosition().x/8, 850.0f, 1400.0f, 650.0f), 
+      piso(240.0f, 650.0f, 1400.0f, 650.0f), 
       tiempoDelta(0.0f), 
       tiempoPartida(90.0f), 
       inicioTiempo(reloj.getElapsedTime().asSeconds())
@@ -20,9 +20,9 @@ Juego::~Juego()
 
 void Juego::reiniciarJugadores()
 {
-    jugador1 = new Hanzo(window.getPosition().x/2-200, 450.0f, sf::Color::Yellow);
+    jugador1 = new Hanzo(window.getPosition().x/2-200, 0.0f, sf::Color::Yellow);
     jugador1->cargarAnimaciones();
-    jugador2 = new Samurai(window.getPosition().x/2+200, 450.0f, sf::Color::Red);
+    jugador2 = new Samurai(window.getPosition().x/2+200, 0.0f, sf::Color::Red);
     jugador2->cargarAnimaciones();
 }
 
@@ -30,20 +30,20 @@ void Juego::manejarAtaques(const sf::Event &event)
 {
     if (event.key.code == sf::Keyboard::R && jugador1->getHitbox().getGlobalBounds().intersects(jugador2->getRectan().getGlobalBounds()) && !jugador1->getIsDefending())
     {
-        jugador2->recibirAtaque(15.0f, sf::Vector2f(direccion1 * 160.0f, -150.0f));
-        jugador1->aumentarEnergia(8.0f);
+        jugador2->recibirAtaque(15.0f, sf::Vector2f(direccion1 * 90.0f, -150.0f));
+        jugador1->aumentarEnergia(20.0f);
         verificarDerrota(jugador2, "Jugador 1");
     }
     if (event.key.code == sf::Keyboard::P && jugador2->getHitbox().getGlobalBounds().intersects(jugador1->getRectan().getGlobalBounds()) && !jugador2->getIsDefending())
     {
-        jugador1->recibirAtaque(15.0f, sf::Vector2f(direccion2 * 175.0f, -150.0f));
-        jugador2->aumentarEnergia(10.0f);
+        jugador1->recibirAtaque(15.0f, sf::Vector2f(direccion2 * 125.0f, -150.0f));
+        jugador2->aumentarEnergia(15.0f);
         verificarDerrota(jugador1, "Jugador 2");
     }
     if (event.key.code == sf::Keyboard::T  && jugador1->getEnergia()==100 && !jugador1->getIsDefending())
     {
         jugador1->usarUltimate(*jugador2);
-        jugador2->recibirAtaque(50.0f, sf::Vector2f(direccion1 * 250.0f, -200.0f));
+        jugador2->recibirAtaque(50.0f, sf::Vector2f(direccion1 * 90.0f, -200.0f));
         verificarDerrota(jugador2, "Jugador 1");
     }
     if (event.key.code == sf::Keyboard::I && jugador2->getEnergia()==100)
@@ -187,6 +187,8 @@ void Juego::actualizar()
     sf::Keyboard::O,   // Tecla para ataque de proyectiles
     direccion2
 );
+    verificarDerrota(jugador2, "Jugador 1");
+    verificarDerrota(jugador1, "Jugador 2");
 
     static_cast<Hanzo*>(jugador1)->actualizarUltimates(tiempoDelta, direccion1); // Actualiza las ultimates de Hanzo
 

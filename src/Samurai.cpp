@@ -107,13 +107,12 @@ void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard:
         remainingJumps = 25;
         retroceso_y = 0.0f; // Resetear retroceso en Y
     }
-    else {
-        // Si no colisiona con el piso, la gravedad sigue actuando
+    if(!piso.colisionaCon(rectan) && (rectan.getPosition().x < 240 || rectan.getPosition().x > 1640)) {
         isJumping = true;
     }
 
     if (rectan.getPosition().y > 1080) 
     {
-        reducirVidas({900.0f, -rectan.getSize().y});
+        reducirVidas({960.0f, -rectan.getSize().y});
     }
 }

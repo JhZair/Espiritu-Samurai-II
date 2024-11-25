@@ -28,7 +28,7 @@ void Hanzo::actualizarUltimates(float tiempoDelta, float direccion) {
     }
     ultimates.erase(
         std::remove_if(ultimates.begin(), ultimates.end(), [](const sf::CircleShape& ultimate) {
-            return ultimate.getPosition().x > 800; // Fuera de la pantalla
+            return (ultimate.getPosition().x > 1920 || ultimate.getPosition().x < 0); // Fuera de la pantalla
         }),
         ultimates.end()
     );
@@ -119,7 +119,7 @@ void Hanzo::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::K
     retroceso_x *= 0.9f;
     retroceso_y *= 0.9f;
 
-    if (piso.colisionaCon(rectan)) {
+    if(piso.colisionaCon(rectan)) {
         // Ajustar la posición del luchador para que quede sobre el piso
         rectan.setPosition(rectan.getPosition().x, piso.getPosY() - rectan.getSize().y);
         velocityY = 0.0f;  // Detener la gravedad
@@ -127,13 +127,12 @@ void Hanzo::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::K
         reapareciendo = false;
         retroceso_y = 0.0f; // Resetear retroceso en Y
     }
-    else {
-        // Si no colisiona con el piso, la gravedad sigue actuando
+    if(!piso.colisionaCon(rectan) && (rectan.getPosition().x < 240 || rectan.getPosition().x > 1640)) {
         isJumping = true;
     }
 
     if (rectan.getPosition().y > 1080) 
     {
-        reducirVidas({750.0f, -rectan.getSize().y-1});
+        reducirVidas({960.0f, -rectan.getSize().y});
     }
 }

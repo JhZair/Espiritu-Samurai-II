@@ -20,7 +20,7 @@ Menu::~Menu()
 void Menu::set_values()
 {
     // Ventana principal
-    window.create(sf::VideoMode(1920, 1080), "Menu SFML", sf::Style::Titlebar | sf::Style::Close);
+    window.create(sf::VideoMode(1920, 1080), "Menu SFML", sf::Style::Fullscreen);
     window.setPosition(sf::Vector2i(0, 0));
 
     // Fuente
@@ -84,19 +84,13 @@ void Menu::showControls()
 {
     if (!controlsWindow.isOpen())
     {
-        controlsWindow.create(sf::VideoMode(1920, 1080), "Controles", sf::Style::Titlebar | sf::Style::Close);
+        controlsWindow.create(sf::VideoMode(1920, 1080), "Controles", sf::Style::Fullscreen);
         // Fondo de la ventana de controles
         if (!imagecontrolBackground.loadFromFile("../assets/images/controles.jpeg"))
             throw std::runtime_error("Error cargando la imagen de controles");
 
         controlsBackground.setTexture(imagecontrolBackground);
 
-        // Botón de "Volver"
-        backButton.setFont(font);
-        backButton.setString("Volver");
-        backButton.setCharacterSize(30);
-        backButton.setPosition(350.f, 500.f);
-        backButton.setOutlineColor(sf::Color::Black);
     }
 
     // Mostrar ventana de controles
@@ -110,20 +104,15 @@ void Menu::showControls()
                 controlsWindow.close();
             }
 
-            if (event.type == sf::Event::MouseButtonPressed)
+            if (event.type == sf::Event::KeyPressed)
             {
-                // Detectar clic en el botón "Volver"
-                if (backButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
-                {
                     controlsWindow.close();
                     state = GameState::MainMenu;  // Volver al menú principal
-                }
             }
         }
 
         controlsWindow.clear();
         controlsWindow.draw(controlsBackground);
-        controlsWindow.draw(backButton);
         controlsWindow.display();
     }
 }

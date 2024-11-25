@@ -5,12 +5,12 @@
 
 Luchador::Luchador(float x, float y, sf::Color color) : 
     velocidad(200.0f), gravity(1100.5f), velocityY(0), jumpStrength(-480.0f),
-    isJumping(false), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f),
+    isJumping(true), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f),
     retroceso_y(0.0f), reapareciendo(false), isDefending(false), velocidadNormal(200.0f),
     velocidadReducida(50.0f), energia(0.0f), animacionActual("idle"), indiceSprite(0), 
     tiempoEntreSprites(0.13f)
 {
-    rectan.setSize(sf::Vector2f(50.0f, 100.0f));
+    rectan.setSize(sf::Vector2f(50.0f, 114.0f));
     rectan.setPosition(x, y);
     rectan.setFillColor(color);
 
@@ -70,7 +70,7 @@ void Luchador::actualizarShurikens(float tiempoDelta, float direccion, Luchador&
     }
     shurikens.erase(
         std::remove_if(shurikens.begin(), shurikens.end(), [](Shuriken &shuriken)
-                       { return shuriken.getPosicion().x > 800; }),
+                       { return (shuriken.getPosicion().x > 1920 || shuriken.getPosicion().x < 0) ;}),
         shurikens.end());
 }
 

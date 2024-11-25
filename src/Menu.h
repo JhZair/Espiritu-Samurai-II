@@ -42,8 +42,7 @@ private:
     sf::Texture image;                      
     sf::Texture imagecontrolBackground;     
     sf::Sprite bg;                          
-    sf::Sprite controlsBackground;
-    sf::Text backButton;      
+    sf::Sprite controlsBackground;      
     sf::RectangleShape winclose;
         
     size_t currentFrame;
