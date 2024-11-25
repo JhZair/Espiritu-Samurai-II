@@ -26,18 +26,17 @@ protected:
     bool reapareciendo;
     float retroceso_x;
     float retroceso_y;
-    int cooldown_animacion;
     
     sf::Clock clock;
     std::vector<Shuriken> shurikens;
 
-    std::unordered_map<std::string, std::vector<sf::Sprite>> animaciones;  // Animaciones normales
-    std::unordered_map<std::string, std::vector<sf::Sprite>> animacionesEspejadas; // Animaciones espejadas
+    std::map<std::string, std::vector<sf::Sprite>> animaciones;  // Animaciones normales
+    std::map<std::string, std::vector<sf::Sprite>> animacionesEspejadas; // Animaciones espejadas
     std::string animacionActual;
     size_t indiceSprite;
     float tiempoEntreSprites;
     sf::Clock relojSprite;
-    
+
 public:
     Luchador(float x, float y, sf::Color color);
     virtual ~Luchador() = default;
@@ -113,9 +112,6 @@ public:
 
     const std::vector<Shuriken>& getShurikens() const { return shurikens; }
     void setShurikens(const std::vector<Shuriken>& shurikenList) { shurikens = shurikenList; }
-
-    int getCooldownAnim() const { return cooldown_animacion; }
-    void setCooldownAnim(int cooldown) { cooldown_animacion = cooldown; }
 };
 
 #endif

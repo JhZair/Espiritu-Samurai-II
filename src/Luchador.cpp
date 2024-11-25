@@ -8,7 +8,7 @@ Luchador::Luchador(float x, float y, sf::Color color) :
     isJumping(false), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f),
     retroceso_y(0.0f), reapareciendo(false), isDefending(false), velocidadNormal(200.0f),
     velocidadReducida(50.0f), energia(0.0f), animacionActual("idle"), indiceSprite(0), 
-    tiempoEntreSprites(0.13f), cooldown_animacion(0)
+    tiempoEntreSprites(0.13f)
 {
     rectan.setSize(sf::Vector2f(50.0f, 100.0f));
     rectan.setPosition(x, y);
@@ -17,7 +17,7 @@ Luchador::Luchador(float x, float y, sf::Color color) :
     hitbox.setSize(sf::Vector2f(115.0f, 150.0f));
     hitbox.setOrigin(35.0f, 50.0f);
     hitbox.setPosition(rectan.getPosition());
-    hitbox.setFillColor(sf::Color(255, 0, 0, 100)); //Cambiar último 0 para ver hitbox
+    hitbox.setFillColor(sf::Color(255, 0, 0, 100));
 }
 
 void Luchador::recibirAtaque(float damage, sf::Vector2f retroceso)
@@ -91,16 +91,18 @@ void Luchador::cambiarAnimacion(const std::string& nuevaAnimacion, float direcci
         if (animaciones.find(nuevaAnimacion) != animaciones.end()) {
             if (animacionActual != nuevaAnimacion) {
                 animacionActual = nuevaAnimacion;
-                indiceSprite = 0; // Reiniciar el índice del sprite
-                relojSprite.restart(); // Reiniciar el temporizador
+                indiceSprite = 0;
+                relojSprite.restart();
             }
         }
-    } else {
+    }
+    if(direccion < 0) 
+    {
         if (animacionesEspejadas.find(nuevaAnimacion) != animacionesEspejadas.end()) {
             if (animacionActual != nuevaAnimacion) {
                 animacionActual = nuevaAnimacion;
-                indiceSprite = 0; // Reiniciar el índice del sprite
-                relojSprite.restart(); // Reiniciar el temporizador
+                indiceSprite = 0;
+                relojSprite.restart();
             }
         }
     }
