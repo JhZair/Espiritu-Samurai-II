@@ -8,6 +8,7 @@
 #include "Piso.h"
 #include "Animaciones.h"
 #include "Menu.h"
+#include "Sonido.h"
 
 class Juego
 {
@@ -22,6 +23,12 @@ private:
     sf::Clock reloj;
     sf::Clock relojMov;
     Piso piso;
+
+    //JUEGO BACKGROUND xd
+    sf::Texture fondoTexture;
+    sf::Sprite fondoSprite;
+
+    Sounds SonidoManager;
 
     Luchador* jugador1;
     Luchador* jugador2;

@@ -124,6 +124,7 @@ void Juego::determinarGanador()
 
 void Juego::ejecutar()
 {
+    SonidoManager.PlayMusic();
     while (window.isOpen())
     {
         procesarEventos();
@@ -197,7 +198,18 @@ void Juego::actualizar()
 
 void Juego::renderizar()
 {
-    window.clear(sf::Color::Blue);
+    window.clear(); 
+
+    if (!fondoTexture.loadFromFile("../assets/images/img1.jpeg")) {
+        std::cout << "Error al cargar la imagen de fondo!" << std::endl;
+        // Maneja el error si la imagen no se carga correctamente
+    }
+
+    // Configurar el sprite con la textura
+    fondoSprite.setTexture(fondoTexture);
+
+    //Dibujar fondo
+    window.draw(fondoSprite);
 
     // Dibujar el escenario
     window.draw(piso.getRectan());

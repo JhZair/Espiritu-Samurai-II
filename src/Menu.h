@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include "Sonido.h"
 #include <vector>
 
 class Menu
@@ -34,6 +35,7 @@ public:
 
 private:
     // Miembros privados
+    Sounds SonidosM;
     sf::RenderWindow window;                
     sf::RenderWindow controlsWindow;        
     sf::Font font;                          
@@ -42,8 +44,13 @@ private:
     sf::Sprite bg;                          
     sf::Sprite controlsBackground;
     sf::Text backButton;      
-    sf::RectangleShape winclose;            
+    sf::RectangleShape winclose;
+        
+    size_t currentFrame;
+    sf::Clock animationClock;
+    std::vector<sf::Texture> backgroundTextures;       
 
+    sf::Text titulotext;
     std::vector<sf::Text> texts;            
     std::vector<std::string> options;       
     std::vector<sf::Vector2f> coords;       
@@ -56,9 +63,6 @@ private:
 
     sf::Vector2i pos_mouse;                 
     sf::Vector2f mouse_coord;               
-
-    // Método privado
-    bool getSeleccionJugar() const;
 
     GameState state;
 };

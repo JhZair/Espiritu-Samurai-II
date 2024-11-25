@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include <stdexcept>
+#include <iostream>
 
 // Constructor
 Menu::Menu()
@@ -26,11 +27,35 @@ void Menu::set_values()
     if (!font.loadFromFile("../assets/fonts/upheavtt.ttf"))
         throw std::runtime_error("Error cargando la fuente");
 
-    // Fondo del menú
-    if (!image.loadFromFile("../assets/images/Fondo_menu/img (1).jpg"))
-        throw std::runtime_error("Error cargando la imagen de fondo");
-    bg.setTexture(image);
+     // Cargar imágenes del fondo animado
+    for (int i = 1; i <= 100; ++i) {
+        sf::Texture texture;
+        std::string fileName = "../assets/images/Fondo_menu/img (" + std::to_string(i) + ").jpg";
+        if (!texture.loadFromFile(fileName)) {
+            std::cout << "Error cargando la imagen: " << fileName << std::endl;
+            continue;
+        }
+        backgroundTextures.push_back(texture);
+    }
 
+    if (backgroundTextures.empty())
+        throw std::runtime_error("No se pudieron cargar las texturas del fondo animado");
+
+    // Configurar el primer frame
+    bg.setTexture(backgroundTextures[0]);
+    currentFrame = 0;
+
+    //Titulo del juego
+    
+    titulotext.setFont(font);
+    titulotext.setString("Espiritu Samurai II");
+    titulotext.setCharacterSize(80);
+    titulotext.setFillColor(sf::Color::White);
+    
+    // Centrar el título horizontalmente
+    float titleX = (1920.f - titulotext.getLocalBounds().width) / 2;
+    titulotext.setPosition(titleX, 200.f); // Posición vertical más arriba
+    
     // Opciones del menú
     options = {"Jugar", "Controles", "Salir"};
     coords = {{860.f, 350.f}, {860.f, 475.f}, {860.f, 600.f}};
@@ -60,7 +85,6 @@ void Menu::showControls()
     if (!controlsWindow.isOpen())
     {
         controlsWindow.create(sf::VideoMode(1920, 1080), "Controles", sf::Style::Titlebar | sf::Style::Close);
-
         // Fondo de la ventana de controles
         if (!imagecontrolBackground.loadFromFile("../assets/images/controles.jpeg"))
             throw std::runtime_error("Error cargando la imagen de controles");
@@ -177,8 +201,14 @@ void Menu::draw_all()
 {
     if (window.isOpen())
     {
+        if (animationClock.getElapsedTime().asMilliseconds() > 100) {
+            currentFrame = (currentFrame + 1) % backgroundTextures.size(); // Ciclar frames
+            bg.setTexture(backgroundTextures[currentFrame]); // Actualizar el fondo
+            animationClock.restart();
+        }
         window.clear();
         window.draw(bg);  // Fondo principal
+        window.draw(titulotext);
         for (const auto& text : texts)
         {
             window.draw(text);
@@ -190,8 +220,14 @@ void Menu::draw_all()
 // Ejecuta el menú
 void Menu::run_menu()
 {
+    bool isMenuMusicPlaying = false;
     while (window.isOpen()) // Mientras la ventana del menú esté abierta
     {
+        if (!isMenuMusicPlaying)
+        {
+            SonidosM.PlayMenuSound(); // Reemplaza con tu método para reproducir música del menú
+            isMenuMusicPlaying = true;
+        }
         loop_events();
         draw_all();
 
@@ -201,6 +237,7 @@ void Menu::run_menu()
         }
         else if (state == GameState::Game || state == GameState::Exit)
         {
+            SonidosM.PauseMenuSound();
             window.close(); // Cierra la ventana del menú
             break;
         }
