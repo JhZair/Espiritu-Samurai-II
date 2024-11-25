@@ -2,9 +2,13 @@
 #include <iostream>
 #include "Luchador.h"
 #include <vector>
+#include "Piso.h"
 
-Luchador::Luchador(float x, float y, sf::Color color) : velocidad(200.0f), gravity(1100.5f), velocityY(0), jumpStrength(-480.0f),
-                                                        isJumping(false), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f), retroceso_y(0.0f), reapareciendo(false)
+Luchador::Luchador(float x, float y, sf::Color color) : 
+    velocidad(200.0f), gravity(1100.5f), velocityY(0), jumpStrength(-480.0f),
+    isJumping(false), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f),
+    retroceso_y(0.0f), reapareciendo(false), isDefending(false), velocidadNormal(200.0f),
+    velocidadReducida(50.0f), energia(0.0f)
 {
     rectan.setSize(sf::Vector2f(50.0f, 100.0f));
     rectan.setPosition(x, y);
@@ -13,37 +17,31 @@ Luchador::Luchador(float x, float y, sf::Color color) : velocidad(200.0f), gravi
     hitbox.setSize(sf::Vector2f(115.0f, 150.0f));
     hitbox.setOrigin(35.0f, 50.0f);
     hitbox.setPosition(rectan.getPosition());
-    hitbox.setFillColor(sf::Color(255, 0, 0, 100)); // Cambiar último 0 para ver hitbox
+    hitbox.setFillColor(sf::Color(255, 0, 0, 100)); //Cambiar último 0 para ver hitbox
 }
 
-void Luchador::lanzarCuchillo()
+void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, Piso& piso, sf::Keyboard::Key defensa)
 {
-    if (clock.getElapsedTime().asSeconds() >= 2) {
-        Cuchillo cuchillo(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
-        cuchillos.push_back(cuchillo);
-        clock.restart(); // Reinicia el reloj para medir el tiempo nuevamente
-    }
-}
-
-void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY)
-{
-    if (sf::Keyboard::isKeyPressed(izquierda) && rectan.getPosition().x > 0)
+    velocityY += gravity * tiempoDelta;
+    if (sf::Keyboard::isKeyPressed(izquierda))
     {
         rectan.move(-velocidad * tiempoDelta, 0.0f);
     }
-    if (sf::Keyboard::isKeyPressed(derecha) && rectan.getPosition().x < 750)
+    if (sf::Keyboard::isKeyPressed(derecha))
     {
         rectan.move(velocidad * tiempoDelta, 0.0f);
     }
-    if (isJumping)
-    {
-        velocityY += gravity * tiempoDelta;
-    }
-
     if (sf::Keyboard::isKeyPressed(up) && !isJumping)
     {
         velocityY = jumpStrength;
         isJumping = true;
+    }
+    if (sf::Keyboard::isKeyPressed(defensa)) {
+        isDefending = true;
+        velocidad = velocidadReducida;
+    } else {
+        isDefending = false;
+        velocidad = velocidadNormal;
     }
 
     rectan.move(0.0f, velocityY * tiempoDelta);
@@ -57,22 +55,31 @@ void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard
     retroceso_x *= 0.9f;
     retroceso_y *= 0.9f;
 
-    if (rectan.getPosition().y + rectan.getSize().y >= pisoY)
-    {
-        rectan.setPosition(rectan.getPosition().x, pisoY - rectan.getSize().y);
-        velocityY = 0;
-        isJumping = false;
-
-        retroceso_y = 0.0f;
+    if (piso.colisionaCon(rectan)) {
+        // Ajustar la posición del luchador para que quede sobre el piso
+        rectan.setPosition(rectan.getPosition().x, piso.getPosY() - rectan.getSize().y);
+        velocityY = 0.0f;  // Detener la gravedad
+        isJumping = false; // Ya no está saltando
+        retroceso_y = 0.0f; // Resetear retroceso en Y
+    }
+    else {
+        // Si no colisiona con el piso, la gravedad sigue actuando
+        isJumping = true;
     }
 }
 
 void Luchador::recibirAtaque(float damage, sf::Vector2f retroceso)
-{
+{   
+    if (isDefending) {
+        damage /= 2;
+        retroceso_x = retroceso.x * 2.0f;
+        retroceso_y = retroceso.y * 3.0f;
+    }else
+    {
+        retroceso_x = retroceso.x * 6.0f;
+        retroceso_y = retroceso.y * 5.0f;    
+    }
     health -= damage;
-    // Escalar el retroceso para hacerlo más perceptible
-    retroceso_x = retroceso.x * 5.0f; // Ajusta el factor según sea necesario
-    retroceso_y = retroceso.y * 5.0f; // Aumenta la escala en Y para más elevación
     isJumping = true;
     if (health <= 0) {
         health = maxhealth;
@@ -90,19 +97,41 @@ void Luchador::reducirVidas(sf::Vector2f posicionInicial)
     retroceso_y = 0.0f;
 }
 
-void Luchador::actualizarCuchillos(float tiempoDelta)
+void Luchador::lanzarShurikens()
 {
-    for (auto &cuchillo : cuchillos)
-    {
-        cuchillo.mover(tiempoDelta);
+    if (clock.getElapsedTime().asSeconds() >= 2) {
+        Shuriken shuriken(rectan.getPosition().x + rectan.getSize().x, rectan.getPosition().y + rectan.getSize().y / 2);
+        shurikens.push_back(shuriken);
+        clock.restart();
     }
-
-    cuchillos.erase(
-        std::remove_if(cuchillos.begin(), cuchillos.end(), [](Cuchillo &cuchillo)
-                       { return cuchillo.getPosicion().x > 800; }),
-        cuchillos.end());
 }
 
+void Luchador::actualizarShurikens(float tiempoDelta, float direccion, Luchador& oponente)
+{
+    for (auto &shuriken : shurikens)
+    {
+        shuriken.mover(tiempoDelta, direccion);
+        if(shuriken.getForma().getGlobalBounds().intersects(oponente.rectan.getGlobalBounds())){
+            oponente.recibirAtaque(0.4f, sf::Vector2f(direccion * 15.0f, -50.0f));
+        }
+    }
+    shurikens.erase(
+        std::remove_if(shurikens.begin(), shurikens.end(), [](Shuriken &shuriken)
+                       { return shuriken.getPosicion().x > 800; }),
+        shurikens.end());
+}
+
+void Luchador::aumentarEnergia(float cantidad) {
+    energia += cantidad;
+    if (energia > 100.0f) energia = 100.0f;
+    if (energia < 0.0f) energia = 0.0f;
+}
+
+void Luchador::usarUltimate(Luchador& oponente) {
+    if (energia == 100.0f) { 
+        energia = 0.0f;
+    }
+}
 void Luchador::drawHealthBar(sf::RenderWindow &window, sf::Vector2f position)
 {
     int anchoBarraMax = 200;
@@ -121,4 +150,23 @@ void Luchador::drawHealthBar(sf::RenderWindow &window, sf::Vector2f position)
 
     window.draw(barraTotal);
     window.draw(barraSalud);
+}
+
+void Luchador::drawEnergiaBar(sf::RenderWindow& window, sf::Vector2f position) {
+    int anchoBarra = 200;
+    int altoBarra = 10;
+    float anchoBarraActual = (static_cast<float>(energia) / 100.0f) * anchoBarra;
+
+    sf::RectangleShape barraTotal(sf::Vector2f(anchoBarra, altoBarra));
+    barraTotal.setPosition(position);
+    barraTotal.setFillColor(sf::Color(100, 100, 100));
+    barraTotal.setOutlineColor(sf::Color::Black);
+    barraTotal.setOutlineThickness(2);
+
+    sf::RectangleShape barraEnergia(sf::Vector2f(anchoBarraActual, altoBarra));
+    barraEnergia.setPosition(position);
+    barraEnergia.setFillColor(sf::Color::White);
+
+    window.draw(barraTotal);
+    window.draw(barraEnergia);
 }

@@ -8,8 +8,11 @@
 #include "Piso.h"
 #include "Animaciones.h"
 #include "Menu.h"
+#include "Sonido.h"
+
 class Juego
 {
+friend class Menu;
 public:
     Juego();
     ~Juego();
@@ -22,7 +25,11 @@ private:
     sf::Clock relojMov;
     Piso piso;
 
-   
+ //JUEGO BACKGROUND xd
+    sf::Texture fondoTexture;
+    sf::Sprite fondoSprite;
+
+    Sounds SonidoManager;
 
     Luchador* jugador1;
     Luchador* jugador2;
@@ -31,6 +38,9 @@ private:
     float tiempoPartida;
     float inicioTiempo;
     bool animationsInitialized;
+
+    float direccion1;
+    float direccion2;
 
     void procesarEventos();
     void actualizar();
@@ -45,8 +55,6 @@ private:
     void determinarGanador();
     void dibujarTiempoRestante();
     float calcularTiempoRestante();
-    void IniciarMenu();
-
 
     enum class EstadoJuego {
         Menu,
@@ -56,9 +64,6 @@ private:
 
     EstadoJuego estadoActual;
     Menu* menu;
-
-    void ejecutarMenu();
-    void ejecutarJuego();
 };
 
 #endif
