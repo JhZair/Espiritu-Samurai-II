@@ -134,7 +134,7 @@ void Luchador::dibujar(sf::RenderWindow& window, float direccion) {
 
 void Luchador::drawHealthBar(sf::RenderWindow &window, sf::Vector2f position)
 {
-    int anchoBarraMax = 200;
+    int anchoBarraMax = 600;
     int altoBarra = 30;
     float anchoBarraActual = (static_cast<float>(health) / maxhealth) * anchoBarraMax;
 

@@ -37,7 +37,7 @@ void Samurai::usarUltimate(Luchador& oponente) {
     energia = 0.0f;
 }
 
-void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, float direccion)
+void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up,  Piso& piso, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, float direccion)
 {   
     if (!isDefending && !isJumping) {
         cambiarAnimacion("idle" , direccion);
@@ -98,13 +98,22 @@ void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard:
     retroceso_x *= 0.9f;
     retroceso_y *= 0.9f;
 
-    if (rectan.getPosition().y + rectan.getSize().y >= pisoY)
-    {
-        rectan.setPosition(rectan.getPosition().x, pisoY - rectan.getSize().y);
-        velocityY = 0;
-        isJumping = false;
+    if (piso.colisionaCon(rectan)) {
+        // Ajustar la posición del luchador para que quede sobre el piso
+        rectan.setPosition(rectan.getPosition().x, piso.getPosY() - rectan.getSize().y);
+        velocityY = 0.0f;  // Detener la gravedad
+        isJumping = false; // Ya no está saltando
         reapareciendo = false;
         remainingJumps = 25;
-        retroceso_y = 0.0f;
+        retroceso_y = 0.0f; // Resetear retroceso en Y
+    }
+    else {
+        // Si no colisiona con el piso, la gravedad sigue actuando
+        isJumping = true;
+    }
+
+    if (rectan.getPosition().y > 1080) 
+    {
+        reducirVidas({900.0f, -rectan.getSize().y});
     }
 }

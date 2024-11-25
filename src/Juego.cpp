@@ -3,8 +3,8 @@
 #include "Juego.h"
 
 Juego::Juego()
-    : window(sf::VideoMode(800, 600), "Peleitas"), 
-      piso(0.0f, 550.0f), 
+    : window(sf::VideoMode(1920, 1080), "Espíritu Samurai II"), 
+      piso(window.getPosition().x/8, 850.0f, 1400.0f, 650.0f), 
       tiempoDelta(0.0f), 
       tiempoPartida(90.0f), 
       inicioTiempo(reloj.getElapsedTime().asSeconds())
@@ -20,9 +20,9 @@ Juego::~Juego()
 
 void Juego::reiniciarJugadores()
 {
-    jugador1 = new Hanzo(175.0f, 450.0f, sf::Color::Yellow);
+    jugador1 = new Hanzo(window.getPosition().x/2-200, 450.0f, sf::Color::Yellow);
     jugador1->cargarAnimaciones();
-    jugador2 = new Samurai(375.0f, 450.0f, sf::Color::Red);
+    jugador2 = new Samurai(window.getPosition().x/2+200, 450.0f, sf::Color::Red);
     jugador2->cargarAnimaciones();
 }
 
@@ -170,7 +170,7 @@ void Juego::actualizar()
     sf::Keyboard::A, // Tecla para moverse a la izquierda
     sf::Keyboard::D, // Tecla para moverse a la derecha
     sf::Keyboard::W, // Tecla para saltar
-    piso.getRectan().getPosition().y, // Posición del piso
+    piso, // Posición del piso
     sf::Keyboard::S, // Tecla para defensa
     sf::Keyboard::R, // Tecla para ataque básico
     sf::Keyboard::T, // Tecla para ataque especial
@@ -182,7 +182,7 @@ void Juego::actualizar()
     sf::Keyboard::Left,   // Tecla para moverse a la izquierda
     sf::Keyboard::Right,  // Tecla para moverse a la derecha
     sf::Keyboard::Up,     // Tecla para saltar
-    piso.getRectan().getPosition().y, // Posición del piso
+    piso, // Posición del piso
     sf::Keyboard::Down,   // Tecla para defensa
     sf::Keyboard::P,   // Tecla para ataque básico
     sf::Keyboard::I,   // Tecla para ataque especial
@@ -218,10 +218,10 @@ void Juego::renderizar()
 
     // Dibujar barras de salud
     jugador1->drawHealthBar(window, sf::Vector2f(25.0f, 50.0f));
-    jugador2->drawHealthBar(window, sf::Vector2f(575.0f, 50.0f));
+    jugador2->drawHealthBar(window, sf::Vector2f(window.getSize().x - 625.0f, 50.0f));
 
-    jugador1->drawEnergiaBar(window, sf::Vector2f(25.0f, 75.0f));
-    jugador2->drawEnergiaBar(window, sf::Vector2f(575.0f, 75.0f));
+    jugador1->drawEnergiaBar(window, sf::Vector2f(25.0f, 95.0f));
+    jugador2->drawEnergiaBar(window, sf::Vector2f(window.getSize().x - 625.0f, 95.0f));
 
     // Dibujar proyectiles
     for (auto &shuriken : jugador1->getShurikens())

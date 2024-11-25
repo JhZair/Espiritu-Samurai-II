@@ -5,6 +5,7 @@
 #include "Shuriken.h"
 #include "Animaciones.h"
 #include <vector>
+#include "Piso.h"
 
 class Luchador : public Animacion
 {
@@ -41,7 +42,7 @@ public:
     Luchador(float x, float y, sf::Color color);
     virtual ~Luchador() = default;
     virtual void lanzarShurikens();
-    virtual void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, float direccion) = 0;
+    virtual void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up,  Piso& piso, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, float direccion) = 0;
     virtual void usarUltimate(Luchador& oponente);
     void recibirAtaque(float damage, sf::Vector2f retroceso);
     void reducirVidas(sf::Vector2f posicionInicial);
