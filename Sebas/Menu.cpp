@@ -1,5 +1,7 @@
+#include "Juego.h"
 #include "Menu.h"
 #include <stdexcept>
+#include <iostream>
 
 // Constructor
 Menu::Menu()
@@ -19,17 +21,46 @@ Menu::~Menu()
 void Menu::set_values()
 {
     // Ventana principal
-    window.create(sf::VideoMode(1920, 1080), "Menu SFML", sf::Style::Titlebar | sf::Style::Close);
+    window.create(sf::VideoMode::getDesktopMode(), "Juego SFML", sf::Style::Fullscreen);
     window.setPosition(sf::Vector2i(0, 0));
 
     // Fuente
     if (!font.loadFromFile("../assets/fonts/upheavtt.ttf"))
         throw std::runtime_error("Error cargando la fuente");
 
-    // Fondo del menú
-    if (!image.loadFromFile("../assets/images/Fondo_menu/img (1).jpg"))
-        throw std::runtime_error("Error cargando la imagen de fondo");
-    bg.setTexture(image);
+     // Cargar imágenes del fondo animado
+    for (int i = 1; i <= 100; ++i) {
+        sf::Texture texture;
+        std::string fileName = "../assets/images/Fondo_menu/img (" + std::to_string(i) + ").jpg";
+        if (!texture.loadFromFile(fileName)) {
+            std::cout << "Error cargando la imagen: " << fileName << std::endl;
+            continue;
+        }
+        backgroundTextures.push_back(texture);
+    }
+
+    if (backgroundTextures.empty())
+        throw std::runtime_error("No se pudieron cargar las texturas del fondo animado");
+
+    // Configurar el primer frame
+    bg.setTexture(backgroundTextures[0]);
+    currentFrame = 0;
+
+    //Titulo del juego
+    
+    titulotext.setFont(font);
+    titulotext.setString("Espiritu Samurai II");
+    titulotext.setCharacterSize(80);
+    titulotext.setFillColor(sf::Color::White);
+    
+    
+    
+    // Centrar el título horizontalmente
+    float titleX = (1920.f - titulotext.getLocalBounds().width) / 2;
+    titulotext.setPosition(titleX, 200.f); // Posición vertical más arriba
+    
+
+
 
     // Opciones del menú
     options = {"Jugar", "Controles", "Salir"};
@@ -59,7 +90,7 @@ void Menu::showControls()
 {
     if (!controlsWindow.isOpen())
     {
-        controlsWindow.create(sf::VideoMode(1920, 1080), "Controles", sf::Style::Titlebar | sf::Style::Close);
+        controlsWindow.create(sf::VideoMode::getDesktopMode(), "Controles", sf::Style::Fullscreen);
 
         // Fondo de la ventana de controles
         if (!imagecontrolBackground.loadFromFile("../assets/images/controles.jpeg"))
@@ -157,6 +188,7 @@ void Menu::loop_events()
             else if (pos == 1) // Controles
             {
                 state = GameState::Controls;  // Cambiar estado a Controles
+                
             }
             else if (pos == 2) // Salir
             {
@@ -177,8 +209,14 @@ void Menu::draw_all()
 {
     if (window.isOpen())
     {
+        if (animationClock.getElapsedTime().asMilliseconds() > 100) {
+            currentFrame = (currentFrame + 1) % backgroundTextures.size(); // Ciclar frames
+            bg.setTexture(backgroundTextures[currentFrame]); // Actualizar el fondo
+            animationClock.restart();
+        }
         window.clear();
         window.draw(bg);  // Fondo principal
+        window.draw(titulotext);
         for (const auto& text : texts)
         {
             window.draw(text);
@@ -188,10 +226,16 @@ void Menu::draw_all()
 }
 
 // Ejecuta el menú
-void Menu::run_menu()
+void Menu::run_menu(Juego& juego)
 {
+    bool isMenuMusicPlaying = false;
     while (window.isOpen()) // Solo continuar si la ventana está abierta
     {
+        if (!isMenuMusicPlaying)
+        {
+            SonidosM.PlayMenuSound(); // Reemplaza con tu método para reproducir música del menú
+            isMenuMusicPlaying = true;
+        }
         loop_events();
         draw_all();
 
@@ -202,6 +246,10 @@ void Menu::run_menu()
         else if (state == GameState::Game)
         {
             // Lógica para iniciar el juego (esto depende de tu implementación)
+
+           
+            juego.ejecutar();
+            
             break;  // Salir del ciclo del menú para ejecutar el juego
         }
         else if (state == GameState::Exit)
