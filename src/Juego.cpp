@@ -122,22 +122,19 @@ void Juego::determinarGanador()
     window.close();
 }
 
-void Juego::ejecutar(){   
-    Menu menu;
-    menu.run_menu();  // Ejecutar el menú
+void Juego::ejecutar()
+{
+    while (window.isOpen())
+    {
+        procesarEventos();
+        actualizar();
+        renderizar();
 
-    if (menu.state == Menu::GameState::Game) {  // Si el jugador selecciono "Jugar"
-        while (window.isOpen()) {
-            procesarEventos();
-            actualizar();
-            renderizar();
-            if (calcularTiempoRestante() <= 0) {
-                determinarGanador();
-                break;
-            }
+        if (calcularTiempoRestante() <= 0)
+        {
+            determinarGanador(); // Anuncia el ganador y cierra la ventana.
+            break;
         }
-    } else if (menu.state == Menu::GameState::Controls) { 
-        menu.showControls();
     }
 }
 

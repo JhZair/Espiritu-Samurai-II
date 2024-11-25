@@ -187,10 +187,9 @@ void Menu::draw_all()
     }
 }
 
-// Ejecuta el menú
 void Menu::run_menu()
 {
-    while (window.isOpen()) // Solo continuar si la ventana está abierta
+    while (window.isOpen()) // Mientras la ventana del menú esté abierta
     {
         loop_events();
         draw_all();
@@ -199,15 +198,11 @@ void Menu::run_menu()
         {
             showControls();
         }
-        else if (state == GameState::Game)
+        else if (state == GameState::Game || state == GameState::Exit)
         {
-            // Lógica para iniciar el juego (esto depende de tu implementación)
-            break;  // Salir del ciclo del menú para ejecutar el juego
-        }
-        else if (state == GameState::Exit)
-        {
-            window.close();
-            break;  // Salir del ciclo del menú
+            window.close(); // Cierra la ventana del menú
+            break;
         }
     }
 }
+
