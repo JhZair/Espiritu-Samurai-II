@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-Samurai::Samurai(float x, float y, sf::Color color) : Luchador(x, y, color), remainingJumps(25), animacionActual("idle"), indiceSprite(0), tiempoEntreSprites(0.13f) {}
+Samurai::Samurai(float x, float y, sf::Color color) : Luchador(x, y, color), remainingJumps(25) {}
 
 void Samurai::cargarAnimaciones() {
     std::string rutaBase = "../assets/anims/samurai/";
@@ -13,7 +13,6 @@ void Samurai::cargarAnimaciones() {
     animaciones["attack"] = Animacion::cargarSprites(rutaBase + "ataque_samurai.png", 5, 140, 140, sf::Color(192, 192, 192), false);
     animaciones["attack_s"] = Animacion::cargarSprites(rutaBase + "ataque_especial_samurai.png", 12, 160, 140, sf::Color(192, 192, 192), false);
     animaciones["defense"] = Animacion::cargarSprites(rutaBase + "bloqueo_samurai.png", 1, 90, 140, sf::Color(192, 192, 192), false);
-    animaciones["hit"] = Animacion::cargarSprites(rutaBase + "dañado_samurai.png", 5, 121.6, 140, sf::Color(192, 192, 192), false);
     animaciones["shoot"] = Animacion::cargarSprites(rutaBase + "proyectil_samurai.png", 7, 195, 140, sf::Color(192, 192, 192), false);
     animaciones["intro_vict"] = Animacion::cargarSprites(rutaBase + "victoria_samurai.png", 3, 90, 140, sf::Color(192, 192, 192), false);
     animaciones["death"] = Animacion::cargarSprites(rutaBase + "muerte_samurai.png", 9, 155, 120, sf::Color(192, 192, 192), false);
@@ -25,81 +24,74 @@ void Samurai::cargarAnimaciones() {
     animacionesEspejadas["attack"] = Animacion::cargarSprites(rutaBase + "ataque_samurai.png", 5, 140, 140, sf::Color(192, 192, 192), true);
     animacionesEspejadas["attack_s"] = Animacion::cargarSprites(rutaBase + "ataque_especial_samurai.png", 12, 160, 140, sf::Color(192, 192, 192), true);
     animacionesEspejadas["defense"] = Animacion::cargarSprites(rutaBase + "bloqueo_samurai.png", 1, 90, 140, sf::Color(192, 192, 192), true);
-    animacionesEspejadas["hit"] = Animacion::cargarSprites(rutaBase + "dañado_samurai.png", 5, 121.6, 140, sf::Color(192, 192, 192), true);
-    animacionesEspejadas["shoot"] = Animacion::cargarSprites(rutaBase + "proyectil_samurai.png", 7, 195, 140, sf::Color(192, 192, 192), true);
+    animacionesEspejadas["shoot"] = Animacion::cargarSprites(rutaBase + "disparo_samurai.png", 7, 195, 140, sf::Color(192, 192, 192), true);
     animacionesEspejadas["intro_vict"] = Animacion::cargarSprites(rutaBase + "victoria_samurai.png", 3, 90, 140, sf::Color(192, 192, 192), true);
     animacionesEspejadas["death"] = Animacion::cargarSprites(rutaBase + "muerte_samurai.png", 9, 155, 120, sf::Color(192, 192, 192), true);
 }
 
-void Samurai::cambiarAnimacion(const std::string& nuevaAnimacion, float direccion) {
-    if(direccion > 0){
-        if (animaciones.find(nuevaAnimacion) != animaciones.end()) {
-            animacionActual = nuevaAnimacion;
-        }
-    }else{
-         if (animacionesEspejadas.find(nuevaAnimacion) != animacionesEspejadas.end()) {
-            animacionActual = nuevaAnimacion;
-        }
-    indiceSprite = 0; // Reiniciar el índice del sprite
-    relojSprite.restart(); // Reiniciar el temporizador
+void Samurai::usarUltimate(Luchador& oponente) {
+    health += maxhealth * 0.55f;
+    if (health > maxhealth) {
+        health = maxhealth;  // No exceder la salud máxima
     }
+    energia = 0.0f;
 }
 
-void Samurai::actualizarAnimacion(float direccion) {
-    if (relojSprite.getElapsedTime().asSeconds() >= tiempoEntreSprites) {
-        if(direccion > 0) {
-            indiceSprite = (indiceSprite + 1) % animaciones[animacionActual].size(); // Ciclo entre los sprites
-        }else{
-            indiceSprite = (indiceSprite + 1) % animacionesEspejadas[animacionActual].size(); // Ciclo entre los sprites
-        }
-        relojSprite.restart();
-    }
-}
-
-void Samurai::dibujar(sf::RenderWindow& window, float direccion) {
-    actualizarAnimacion(direccion);
-    if(direccion > 0){
-        sf::Sprite& spriteActual = animaciones[animacionActual][indiceSprite];
-        spriteActual.setPosition(rectan.getPosition());
-        window.draw(spriteActual);
-    }else{
-        sf::Sprite& spriteActual = animacionesEspejadas[animacionActual][indiceSprite];
-        spriteActual.setPosition(rectan.getPosition());
-        window.draw(spriteActual);
-    }
-}
-
-void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, Luchador& otroJugador, float direccion)
+void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, float direccion)
 {
+    if (!isDefending && !isJumping) {
+        cambiarAnimacion("idle" , direccion);
+    }
     if (sf::Keyboard::isKeyPressed(izquierda))
     {
         rectan.move(-velocidad * tiempoDelta, 0.0f);
+        cambiarAnimacion("run_b", direccion);
     }
     if (sf::Keyboard::isKeyPressed(derecha))
     {
         rectan.move(velocidad * tiempoDelta, 0.0f);
+        cambiarAnimacion("run", direccion);
     }
-
     if (isJumping)
     {
         velocityY += gravity * tiempoDelta;
     }
-
     if (sf::Keyboard::isKeyPressed(up) && remainingJumps > 0)
     {
         isJumping = true;
         velocityY = jumpStrength;
         remainingJumps--;
     }
+    if (isJumping && animacionActual != "attack" && animacionActual != "attack_s" && animacionActual != "shoot") {
+        cambiarAnimacion("jump", direccion);
+    }
+    if (sf::Keyboard::isKeyPressed(ataque)) {
+        cambiarAnimacion("attack", direccion);
+        cooldown_animacion = tiempoDelta + 300;
+    }
+    // Animación de ataque especial
+    if (sf::Keyboard::isKeyPressed(ataque_s) && energia == 100.0f && tiempoDelta >= cooldown_animacion) {
+        cambiarAnimacion("intro_vict", direccion);
+        setCooldownAnim(tiempoDelta + 800);
+    }
+    if (sf::Keyboard::isKeyPressed(ataque_p) && tiempoDelta >= cooldown_animacion) {
+        cambiarAnimacion("shoot", direccion);
+        setCooldownAnim(tiempoDelta + 100);
+    }
     if (sf::Keyboard::isKeyPressed(defensa)) {
         isDefending = true;
         velocidad = velocidadReducida;
+        cambiarAnimacion("defense", direccion);
     } else {
         isDefending = false;
         velocidad = velocidadNormal;
     }
+    if (reapareciendo){
+        cambiarAnimacion("death", direccion);
+    }
+
     rectan.move(0.0f, velocityY * tiempoDelta);
-    hitbox.setPosition(rectan.getPosition()); // Actualizar la posición de la hitbox
+    hitbox.setPosition(rectan.getPosition());
 
     // Aplicar retroceso
     rectan.move(retroceso_x * tiempoDelta, retroceso_y * tiempoDelta);
@@ -115,15 +107,8 @@ void Samurai::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard:
         rectan.setPosition(rectan.getPosition().x, pisoY - rectan.getSize().y);
         velocityY = 0;
         isJumping = false;
+        reapareciendo = false;
         remainingJumps = 25;
         retroceso_y = 0.0f;
     }
-}
-
-void Samurai::usarUltimate(Luchador& oponente) {
-    health += maxhealth * 0.55f;
-    if (health > maxhealth) {
-        health = maxhealth;  // No exceder la salud máxima
-    }
-    energia = 0.0f;
 }

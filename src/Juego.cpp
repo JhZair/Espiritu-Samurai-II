@@ -66,45 +66,6 @@ void Juego::manejarProyectiles(const sf::Event &event)
     }
 }
 
-void Juego::actualizar()
-{
-    tiempoDelta = relojMov.restart().asSeconds();
-    // Actualizar movimiento de jugadores
-    jugador1->move(
-    tiempoDelta, 
-    sf::Keyboard::A, // Tecla para moverse a la izquierda
-    sf::Keyboard::D, // Tecla para moverse a la derecha
-    sf::Keyboard::W, // Tecla para saltar
-    piso.getRectan().getPosition().y, // Posición del piso
-    sf::Keyboard::S, // Tecla para defensa
-    sf::Keyboard::R, // Tecla para ataque básico
-    sf::Keyboard::T, // Tecla para ataque especial
-    sf::Keyboard::Q, // Tecla para ataque de proyectiles
-    *jugador2,         // Referencia al oponente
-    direccion1
-);
-    jugador2->move(
-    tiempoDelta, 
-    sf::Keyboard::Left,   // Tecla para moverse a la izquierda
-    sf::Keyboard::Right,  // Tecla para moverse a la derecha
-    sf::Keyboard::Up,     // Tecla para saltar
-    piso.getRectan().getPosition().y, // Posición del piso
-    sf::Keyboard::Down,   // Tecla para defensa
-    sf::Keyboard::P,   // Tecla para ataque básico
-    sf::Keyboard::I,   // Tecla para ataque especial
-    sf::Keyboard::O,   // Tecla para ataque de proyectiles
-    *jugador1,             // Referencia al oponente
-    direccion2
-);
-
-    static_cast<Hanzo*>(jugador1)->actualizarUltimates(tiempoDelta, direccion1); // Actualiza las ultimates de Hanzo
-
-
-    // Actualizar proyectiles
-    jugador1->actualizarShurikens(tiempoDelta, direccion1, *jugador2);
-    jugador2->actualizarShurikens(tiempoDelta, direccion2, *jugador1);
-}
-
 void Juego::verificarDerrota(Luchador *jugador, const std::string &ganador)
 {
     if (jugador->getLives() == 0)
@@ -198,6 +159,43 @@ void Juego::procesarEventos()
             manejarProyectiles(event);
         }
     }
+}
+
+void Juego::actualizar()
+{
+    tiempoDelta = relojMov.restart().asSeconds();
+    // Actualizar movimiento de jugadores
+    jugador1->move(
+    tiempoDelta, 
+    sf::Keyboard::A, // Tecla para moverse a la izquierda
+    sf::Keyboard::D, // Tecla para moverse a la derecha
+    sf::Keyboard::W, // Tecla para saltar
+    piso.getRectan().getPosition().y, // Posición del piso
+    sf::Keyboard::S, // Tecla para defensa
+    sf::Keyboard::R, // Tecla para ataque básico
+    sf::Keyboard::T, // Tecla para ataque especial
+    sf::Keyboard::Q, // Tecla para ataque de proyectiles
+    direccion1
+);
+    jugador2->move(
+    tiempoDelta, 
+    sf::Keyboard::Left,   // Tecla para moverse a la izquierda
+    sf::Keyboard::Right,  // Tecla para moverse a la derecha
+    sf::Keyboard::Up,     // Tecla para saltar
+    piso.getRectan().getPosition().y, // Posición del piso
+    sf::Keyboard::Down,   // Tecla para defensa
+    sf::Keyboard::P,   // Tecla para ataque básico
+    sf::Keyboard::I,   // Tecla para ataque especial
+    sf::Keyboard::O,   // Tecla para ataque de proyectiles
+    direccion2
+);
+
+    static_cast<Hanzo*>(jugador1)->actualizarUltimates(tiempoDelta, direccion1); // Actualiza las ultimates de Hanzo
+
+
+    // Actualizar proyectiles
+    jugador1->actualizarShurikens(tiempoDelta, direccion1, *jugador2);
+    jugador2->actualizarShurikens(tiempoDelta, direccion2, *jugador1);
 }
 
 void Juego::renderizar()

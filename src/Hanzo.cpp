@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-Hanzo::Hanzo(float x, float y, sf::Color color) : Luchador(x, y, color), animacionActual("idle"), indiceSprite(0), tiempoEntreSprites(0.13f) {}
+Hanzo::Hanzo(float x, float y, sf::Color color) : Luchador(x, y, color) {}
 
 void Hanzo::lanzarShurikens() {
     if (clock.getElapsedTime().asSeconds() >= 2) {
@@ -43,7 +43,6 @@ void Hanzo::cargarAnimaciones() {
     animaciones["attack"] = cargarSprites(rutaBase + "ataque_Hanzo.png", 6, 140, 120, sf::Color(64, 176, 72), false); 
     animaciones["attack_s"] = cargarSprites(rutaBase + "ataquespecial_Hanzo.png", 10, 130, 140, sf::Color(64, 176, 72), false);
     animaciones["defense"] = cargarSprites(rutaBase + "bloqueo_Hanzo.png", 1, 110, 120, sf::Color(64, 176, 72), false);
-    animaciones["hit"] = cargarSprites(rutaBase + "daño_Hanzo.png", 2, 110, 120, sf::Color(64, 176, 72), false);
     animaciones["shoot"] = cargarSprites(rutaBase + "ataquep_Hanzo.png", 5, 155, 120, sf::Color(64, 176, 72), false);
     animaciones["intro_vict"] = cargarSprites(rutaBase + "victoria_Hanzo.png", 6, 86, 120, sf::Color(64, 176, 72), false);
     animaciones["death"] = cargarSprites(rutaBase + "muerte_Hanzo.png", 9, 130, 110, sf::Color(64, 176, 72), false);
@@ -55,62 +54,14 @@ void Hanzo::cargarAnimaciones() {
     animacionesEspejadas["attack"] = cargarSprites(rutaBase + "ataque_Hanzo.png", 6, 140, 120, sf::Color(64, 176, 72), true);
     animacionesEspejadas["attack_s"] = cargarSprites(rutaBase + "ataquespecial_Hanzo.png", 10, 130, 140, sf::Color(64, 176, 72), true);
     animacionesEspejadas["defense"] = cargarSprites(rutaBase + "bloqueo_Hanzo.png", 1, 110, 120, sf::Color(64, 176, 72), true);
-    animacionesEspejadas["hit"] = cargarSprites(rutaBase + "daño_Hanzo.png", 2, 110, 120, sf::Color(64, 176, 72), true);
     animacionesEspejadas["shoot"] = cargarSprites(rutaBase + "ataquep_Hanzo.png", 5, 155, 120, sf::Color(64, 176, 72), true);
     animacionesEspejadas["intro_vict"] = cargarSprites(rutaBase + "victoria_Hanzo.png", 6, 86, 120, sf::Color(64, 176, 72), true);
     animacionesEspejadas["death"] = cargarSprites(rutaBase + "muerte_Hanzo.png", 9, 130, 110, sf::Color(64, 176, 72), true);
 }
 
-void Hanzo::cambiarAnimacion(const std::string& nuevaAnimacion, float direccion) {
-    if (direccion > 0) {
-        if (animaciones.find(nuevaAnimacion) != animaciones.end()) {
-            if (animacionActual != nuevaAnimacion) {
-                animacionActual = nuevaAnimacion;
-                indiceSprite = 0; // Reiniciar el índice del sprite
-                relojSprite.restart(); // Reiniciar el temporizador
-            }
-        }
-    } else {
-        if (animacionesEspejadas.find(nuevaAnimacion) != animacionesEspejadas.end()) {
-            if (animacionActual != nuevaAnimacion) {
-                animacionActual = nuevaAnimacion;
-                indiceSprite = 0; // Reiniciar el índice del sprite
-                relojSprite.restart(); // Reiniciar el temporizador
-            }
-        }
-    }
-}
-
-
-void Hanzo::actualizarAnimacion(float direccion) {
-    if (relojSprite.getElapsedTime().asSeconds() >= tiempoEntreSprites) {
-        if (direccion > 0) {
-            indiceSprite = (indiceSprite + 1) % animaciones[animacionActual].size();
-        } else {
-            indiceSprite = (indiceSprite + 1) % animacionesEspejadas[animacionActual].size();
-        }
-        relojSprite.restart();
-    }
-}
-
-
-void Hanzo::dibujar(sf::RenderWindow& window, float direccion) {
-    actualizarAnimacion(direccion);
-    if (direccion > 0) {
-        sf::Sprite& spriteActual = animaciones[animacionActual][indiceSprite];
-        spriteActual.setPosition(rectan.getPosition());
-        window.draw(spriteActual);
-    } else {
-        sf::Sprite& spriteActual = animacionesEspejadas[animacionActual][indiceSprite];
-        spriteActual.setPosition(rectan.getPosition());
-        window.draw(spriteActual);
-    }
-}
-
-
-void Hanzo::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, Luchador& otroJugador, float direccion)
+void Hanzo::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, float direccion)
 {
-    if (!isDefending && !isJumping && retroceso_x == 0.0f && retroceso_y == 0.0f) {
+    if (!isDefending && !isJumping) {
         cambiarAnimacion("idle" , direccion);
     }
     if (sf::Keyboard::isKeyPressed(izquierda))
@@ -137,22 +88,16 @@ void Hanzo::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::K
     }
     if (sf::Keyboard::isKeyPressed(ataque)) {
         cambiarAnimacion("attack", direccion);
-        // cooldownAnimacion = tiempoActual + 300;
-        // if (rectan.getGlobalBounds().intersects(otroJugador.getRectan().getGlobalBounds())) {
-        //     otroJugador.cambiarAnimacion("hit", direccion);
-        //     // otroJugador.cooldownAnimacion = tiempoActual + 500;
-        // }
+        cooldown_animacion = tiempoDelta + 300;
     }
     // Animación de ataque especial
-    if (sf::Keyboard::isKeyPressed(ataque_s) && energia == 100.0f && rectan.getGlobalBounds().intersects(otroJugador.getRectan().getGlobalBounds()) /*&& tiempoActual >= cooldownAnimacion*/) {
+    if (sf::Keyboard::isKeyPressed(ataque_s) && energia == 100.0f && tiempoDelta >= cooldown_animacion) {
         cambiarAnimacion("attack_s", direccion);
-        // cooldownAnimacion = tiempoActual + 800;
-        // otroJugador.cambiarAnimacion("hit", direccion);
-        // otroJugador.cooldownAnimacion = tiempoActual + 500;
+        setCooldownAnim(tiempoDelta + 800);
     }
-    if (sf::Keyboard::isKeyPressed(ataque_p) /*&& tiempoActual >= cooldownAnimacion*/) {
+    if (sf::Keyboard::isKeyPressed(ataque_p) && tiempoDelta >= cooldown_animacion) {
         cambiarAnimacion("shoot", direccion);
-        // cooldownAnimacion = tiempoActual + 100;
+        setCooldownAnim(tiempoDelta + 100);
     }
     if (sf::Keyboard::isKeyPressed(defensa)) {
         isDefending = true;
@@ -161,6 +106,9 @@ void Hanzo::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::K
     } else {
         isDefending = false;
         velocidad = velocidadNormal;
+    }
+    if (reapareciendo){
+        cambiarAnimacion("death", direccion);
     }
 
     rectan.move(0.0f, velocityY * tiempoDelta);
@@ -179,7 +127,7 @@ void Hanzo::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::K
         rectan.setPosition(rectan.getPosition().x, pisoY - rectan.getSize().y);
         velocityY = 0;
         isJumping = false;
-
+        reapareciendo = false;
         retroceso_y = 0.0f;
     }
 }

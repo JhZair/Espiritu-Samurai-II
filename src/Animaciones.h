@@ -16,7 +16,7 @@ public:
     Animacion() = default;
 
     // Método para cargar los sprites desde una hoja de sprites
-    std::vector<sf::Sprite> cargarSprites(const std::string& rutaHoja, int numSprites, int anchoSprite, int altoSprite, sf::Color colorKey, bool espejo);
+    std::vector<sf::Sprite> cargarSprites(const std::string& rutaHoja, int numSprites, float anchoSprite, int altoSprite, sf::Color colorKey, bool espejo);
 
     // Obtener el sprite en un índice específico
     const sf::Sprite& getSprite(size_t indice) const;

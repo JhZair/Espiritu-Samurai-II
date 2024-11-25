@@ -26,14 +26,23 @@ protected:
     bool reapareciendo;
     float retroceso_x;
     float retroceso_y;
+    int cooldown_animacion;
     
     sf::Clock clock;
     std::vector<Shuriken> shurikens;
+
+    std::unordered_map<std::string, std::vector<sf::Sprite>> animaciones;  // Animaciones normales
+    std::unordered_map<std::string, std::vector<sf::Sprite>> animacionesEspejadas; // Animaciones espejadas
+    std::string animacionActual;
+    size_t indiceSprite;
+    float tiempoEntreSprites;
+    sf::Clock relojSprite;
+    
 public:
     Luchador(float x, float y, sf::Color color);
     virtual ~Luchador() = default;
     virtual void lanzarShurikens();
-    virtual void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, Luchador& otroJugador, float direccion);
+    virtual void move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, float direccion) = 0;
     virtual void usarUltimate(Luchador& oponente);
     void recibirAtaque(float damage, sf::Vector2f retroceso);
     void reducirVidas(sf::Vector2f posicionInicial);
@@ -43,9 +52,9 @@ public:
     void drawEnergiaBar(sf::RenderWindow& window, sf::Vector2f position);
 
     virtual void cargarAnimaciones()= 0;
-    virtual void cambiarAnimacion(const std::string& nuevaAnimacion, float direccion)= 0;
-    virtual void actualizarAnimacion(float direccion)= 0;
-    virtual void dibujar(sf::RenderWindow& window, float direccion)= 0;
+    virtual void cambiarAnimacion(const std::string& nuevaAnimacion, float direccion);
+    virtual void actualizarAnimacion(float direccion);
+    virtual void dibujar(sf::RenderWindow& window, float direccion);
 
     // Getters y Setters
     const sf::RectangleShape& getRectan() const { return rectan; }
@@ -104,6 +113,9 @@ public:
 
     const std::vector<Shuriken>& getShurikens() const { return shurikens; }
     void setShurikens(const std::vector<Shuriken>& shurikenList) { shurikens = shurikenList; }
+
+    int getCooldownAnim() const { return cooldown_animacion; }
+    void setCooldownAnim(int cooldown) { cooldown_animacion = cooldown; }
 };
 
 #endif

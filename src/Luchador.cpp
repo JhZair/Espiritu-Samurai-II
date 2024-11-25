@@ -7,7 +7,8 @@ Luchador::Luchador(float x, float y, sf::Color color) :
     velocidad(200.0f), gravity(1100.5f), velocityY(0), jumpStrength(-480.0f),
     isJumping(false), maxhealth(200), health(maxhealth), lives(2), retroceso_x(0.0f),
     retroceso_y(0.0f), reapareciendo(false), isDefending(false), velocidadNormal(200.0f),
-    velocidadReducida(50.0f), energia(0.0f)
+    velocidadReducida(50.0f), energia(0.0f), animacionActual("idle"), indiceSprite(0), 
+    tiempoEntreSprites(0.13f), cooldown_animacion(0)
 {
     rectan.setSize(sf::Vector2f(50.0f, 100.0f));
     rectan.setPosition(x, y);
@@ -17,54 +18,6 @@ Luchador::Luchador(float x, float y, sf::Color color) :
     hitbox.setOrigin(35.0f, 50.0f);
     hitbox.setPosition(rectan.getPosition());
     hitbox.setFillColor(sf::Color(255, 0, 0, 100)); //Cambiar último 0 para ver hitbox
-}
-
-void Luchador::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::Key derecha, sf::Keyboard::Key up, float pisoY, sf::Keyboard::Key defensa, sf::Keyboard::Key ataque, sf::Keyboard::Key ataque_s, sf::Keyboard::Key ataque_p, Luchador& otroJugador, float direccion)
-{
-    if (sf::Keyboard::isKeyPressed(izquierda))
-    {
-        rectan.move(-velocidad * tiempoDelta, 0.0f);
-    }
-    if (sf::Keyboard::isKeyPressed(derecha))
-    {
-        rectan.move(velocidad * tiempoDelta, 0.0f);
-    }
-    if (isJumping)
-    {
-        velocityY += gravity * tiempoDelta;
-    }
-    if (sf::Keyboard::isKeyPressed(up) && !isJumping)
-    {
-        velocityY = jumpStrength;
-        isJumping = true;
-    }
-    if (sf::Keyboard::isKeyPressed(defensa)) {
-        isDefending = true;
-        velocidad = velocidadReducida;
-    } else {
-        isDefending = false;
-        velocidad = velocidadNormal;
-    }
-
-    rectan.move(0.0f, velocityY * tiempoDelta);
-    hitbox.setPosition(rectan.getPosition());
-
-    // Aplicar retroceso
-    rectan.move(retroceso_x * tiempoDelta, retroceso_y * tiempoDelta);
-    hitbox.move(retroceso_x * tiempoDelta, retroceso_y * tiempoDelta);
-
-    // Reducir gradualmente el retroceso
-    retroceso_x *= 0.9f;
-    retroceso_y *= 0.9f;
-
-    if (rectan.getPosition().y + rectan.getSize().y >= pisoY)
-    {
-        rectan.setPosition(rectan.getPosition().x, pisoY - rectan.getSize().y);
-        velocityY = 0;
-        isJumping = false;
-
-        retroceso_y = 0.0f;
-    }
 }
 
 void Luchador::recibirAtaque(float damage, sf::Vector2f retroceso)
@@ -89,6 +42,7 @@ void Luchador::recibirAtaque(float damage, sf::Vector2f retroceso)
 void Luchador::reducirVidas(sf::Vector2f posicionInicial)
 {
     lives--;
+    reapareciendo = true;
     rectan.setPosition(posicionInicial);
     hitbox.setPosition(posicionInicial);
 
@@ -131,6 +85,51 @@ void Luchador::usarUltimate(Luchador& oponente) {
         energia = 0.0f;
     }
 }
+
+void Luchador::cambiarAnimacion(const std::string& nuevaAnimacion, float direccion) {
+    if (direccion > 0) {
+        if (animaciones.find(nuevaAnimacion) != animaciones.end()) {
+            if (animacionActual != nuevaAnimacion) {
+                animacionActual = nuevaAnimacion;
+                indiceSprite = 0; // Reiniciar el índice del sprite
+                relojSprite.restart(); // Reiniciar el temporizador
+            }
+        }
+    } else {
+        if (animacionesEspejadas.find(nuevaAnimacion) != animacionesEspejadas.end()) {
+            if (animacionActual != nuevaAnimacion) {
+                animacionActual = nuevaAnimacion;
+                indiceSprite = 0; // Reiniciar el índice del sprite
+                relojSprite.restart(); // Reiniciar el temporizador
+            }
+        }
+    }
+}
+
+void Luchador::actualizarAnimacion(float direccion) {
+    if (relojSprite.getElapsedTime().asSeconds() >= tiempoEntreSprites) {
+        if (direccion > 0) {
+            indiceSprite = (indiceSprite + 1) % animaciones[animacionActual].size();
+        } else {
+            indiceSprite = (indiceSprite + 1) % animacionesEspejadas[animacionActual].size();
+        }
+        relojSprite.restart();
+    }
+}
+
+void Luchador::dibujar(sf::RenderWindow& window, float direccion) {
+    actualizarAnimacion(direccion);
+    if (direccion > 0) {
+        sf::Sprite& spriteActual = animaciones[animacionActual][indiceSprite];
+        spriteActual.setPosition(rectan.getPosition());
+        window.draw(spriteActual);
+    } else {
+        sf::Sprite& spriteActual = animacionesEspejadas[animacionActual][indiceSprite];
+        spriteActual.setPosition(rectan.getPosition());
+        window.draw(spriteActual);
+    }
+}
+
 void Luchador::drawHealthBar(sf::RenderWindow &window, sf::Vector2f position)
 {
     int anchoBarraMax = 200;

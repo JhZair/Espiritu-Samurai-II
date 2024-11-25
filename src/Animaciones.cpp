@@ -5,7 +5,7 @@
 
 
 // Método para cargar los sprites desde una hoja de sprites
-std::vector<sf::Sprite> Animacion::cargarSprites(const std::string& rutaHoja, int numSprites, int anchoSprite, int altoSprite, sf::Color colorKey, bool espejo) {
+std::vector<sf::Sprite> Animacion::cargarSprites(const std::string& rutaHoja, int numSprites, float anchoSprite, int altoSprite, sf::Color colorKey, bool espejo) {
     std::vector<sf::Sprite> sprites;
 
     // Crear una textura independiente para esta animación
