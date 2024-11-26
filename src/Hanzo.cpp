@@ -127,7 +127,7 @@ void Hanzo::move(float tiempoDelta, sf::Keyboard::Key izquierda, sf::Keyboard::K
         reapareciendo = false;
         retroceso_y = 0.0f; // Resetear retroceso en Y
     }
-    if(!piso.colisionaCon(rectan) && (rectan.getPosition().x < 240 || rectan.getPosition().x > 1640)) {
+    if(!piso.colisionaCon(rectan) && (rectan.getPosition().x < 240 - rectan.getSize().x - 10|| rectan.getPosition().x > 1640)) {
         isJumping = true;
     }
 

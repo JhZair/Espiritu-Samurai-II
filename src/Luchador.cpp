@@ -35,7 +35,7 @@ void Luchador::recibirAtaque(float damage, sf::Vector2f retroceso)
     isJumping = true;
     if (health <= 0) {
         health = maxhealth;
-        reducirVidas({400.0f, -rectan.getSize().y});
+        reducirVidas({960.0f, -rectan.getSize().y});
     }
 }
 
