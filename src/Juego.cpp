@@ -3,7 +3,7 @@
 #include "Juego.h"
 
 Juego::Juego()
-    : window(sf::VideoMode(1920, 1080), "Espíritu Samurai II"), 
+    : window(sf::VideoMode(1920, 1080), "Espíritu Samurai II", sf::Style::Fullscreen), 
       piso(240.0f, 650.0f, 1400.0f, 650.0f), 
       tiempoDelta(0.0f), 
       tiempoPartida(90.0f), 
@@ -20,9 +20,9 @@ Juego::~Juego()
 
 void Juego::reiniciarJugadores()
 {
-    jugador1 = new Hanzo(window.getPosition().x/2-200, 0.0f, sf::Color::Yellow);
+    jugador1 = new Hanzo(window.getPosition().x/2-200, 200.0f, sf::Color::Yellow);
     jugador1->cargarAnimaciones();
-    jugador2 = new Samurai(window.getPosition().x/2+200, 0.0f, sf::Color::Red);
+    jugador2 = new Samurai(window.getPosition().x/2+200, 200.0f, sf::Color::Red);
     jugador2->cargarAnimaciones();
 }
 

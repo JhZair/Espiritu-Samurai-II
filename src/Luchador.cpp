@@ -48,6 +48,9 @@ void Luchador::reducirVidas(sf::Vector2f posicionInicial)
 
     retroceso_x = 0.0f;
     retroceso_y = 0.0f;
+    if (health > 0) {
+        health = maxhealth;
+    }
 }
 
 void Luchador::lanzarShurikens()
