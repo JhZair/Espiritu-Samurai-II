@@ -20,9 +20,9 @@ Juego::~Juego()
 
 void Juego::reiniciarJugadores()
 {
-    jugador1 = new Hanzo(window.getPosition().x/2-200, 200.0f, sf::Color::Yellow);
+    jugador1 = new Hanzo(window.getPosition().x/2+600, 200.0f, sf::Color::Yellow);
     jugador1->cargarAnimaciones();
-    jugador2 = new Samurai(window.getPosition().x/2+200, 200.0f, sf::Color::Red);
+    jugador2 = new Samurai(window.getPosition().x/2+1200, 200.0f, sf::Color::Red);
     jugador2->cargarAnimaciones();
 }
 
