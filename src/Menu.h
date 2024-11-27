@@ -17,8 +17,6 @@ public:
         Exit
     };
 
-    friend class Juego;  // Permite que la clase Juego acceda a los miembros privados de Menu.
-
     // Constructor y Destructor
     Menu();
     ~Menu();
