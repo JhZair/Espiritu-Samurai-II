@@ -52,9 +52,9 @@ public:
     void drawEnergiaBar(sf::RenderWindow& window, sf::Vector2f position);
 
     virtual void cargarAnimaciones()= 0;
-    virtual void cambiarAnimacion(const std::string& nuevaAnimacion, float direccion);
-    virtual void actualizarAnimacion(float direccion);
-    virtual void dibujar(sf::RenderWindow& window, float direccion);
+    void cambiarAnimacion(const std::string& nuevaAnimacion, float direccion);
+    void actualizarAnimacion(float direccion);
+    void dibujar(sf::RenderWindow& window, float direccion);
 
     // Getters y Setters
     const sf::RectangleShape& getRectan() const { return rectan; }

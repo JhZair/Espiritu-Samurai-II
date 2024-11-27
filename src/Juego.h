@@ -36,7 +36,6 @@ private:
     float tiempoDelta;
     float tiempoPartida;
     float inicioTiempo;
-    bool animationsInitialized;
 
     float direccion1;
     float direccion2;
@@ -44,8 +43,6 @@ private:
     void procesarEventos();
     void actualizar();
     void renderizar();
-
-    void inicializarAnimaciones();
 
     void reiniciarJugadores();
     void manejarAtaques(const sf::Event& event);
@@ -55,14 +52,6 @@ private:
     void dibujarTiempoRestante();
     float calcularTiempoRestante();
 
-    enum class EstadoJuego {
-        Menu,
-        Juego,
-        Salir
-    };
-
-    EstadoJuego estadoActual;
-    Menu* menu;
 };
 
 #endif

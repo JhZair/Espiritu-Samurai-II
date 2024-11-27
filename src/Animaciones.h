@@ -9,7 +9,6 @@ class Animacion {
 private:
     std::vector<sf::Sprite> sprites; // Vector de sprites individuales
     std::vector<std::unique_ptr<sf::Texture>> texturas; // Almacena las texturas únicas
-    sf::Texture spriteSheet;         // Hoja de spites
 public:
     Animacion() = default;
 
