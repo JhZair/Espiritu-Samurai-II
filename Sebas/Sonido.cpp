@@ -1,17 +1,13 @@
 #include "Sonido.h"
 
 Sounds::Sounds(){
-	music.openFromFile("../assets/audios/ASGORE THE SHOGUN OF THE MOUNTAIN(interfaz).ogg");
+	music.openFromFile("../assets/audios/Y2meta.app - BATTLE AGAINST A TRUE SAMURAI (128 kbps)(pelea).ogg");
 	music.setLoop(true);
-	music.setVolume(20);
+	music.setVolume(5);
 	
-	if(!PlayMenuBuffer.loadFromFile("../assets/audios/Y2meta.app - BATTLE AGAINST A TRUE SAMURAI (128 kbps)(pelea).ogg")){
-		cout<<"Error al cargar sonido"<<endl;
-	}
-	PlayMenu.setBuffer(PlayMenuBuffer);
-	
-	
-	
+	PlayMenu.openFromFile("../assets/audios/ASGORE THE SHOGUN OF THE MOUNTAIN(interfaz).ogg");
+	PlayMenu.setLoop(true);
+	PlayMenu.setVolume(5);
 	
 }
 void Sounds::PlayMusic() {

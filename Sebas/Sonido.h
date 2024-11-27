@@ -11,8 +11,8 @@ using namespace sf;
 class Sounds{
 	private:
 		Music music;
-		Sound PlayMenu;
-		SoundBuffer PlayMenuBuffer;
+		Music PlayMenu;
+		
 		
 	public:
 		Sounds();

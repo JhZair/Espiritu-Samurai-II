@@ -1,11 +1,10 @@
-#include "Juego.h"
 #include "Menu.h"
 #include <stdexcept>
 #include <iostream>
 
 // Constructor
 Menu::Menu()
-    : pos(0), pressed(false), theselect(false), isPlaying(false), seleccionJugar(false), state(GameState::MainMenu)
+    : pos(0), pressed(false), theselect(false), state(GameState::MainMenu)
 {
     // Llamada a la función de inicialización
     set_values();
@@ -21,7 +20,7 @@ Menu::~Menu()
 void Menu::set_values()
 {
     // Ventana principal
-    window.create(sf::VideoMode::getDesktopMode(), "Juego SFML", sf::Style::Fullscreen);
+    window.create(sf::VideoMode(1920, 1080), "Menu Espíritu Samurai II",sf::Style::Fullscreen);
     window.setPosition(sf::Vector2i(0, 0));
 
     // Fuente
@@ -53,15 +52,10 @@ void Menu::set_values()
     titulotext.setCharacterSize(80);
     titulotext.setFillColor(sf::Color::White);
     
-    
-    
     // Centrar el título horizontalmente
     float titleX = (1920.f - titulotext.getLocalBounds().width) / 2;
     titulotext.setPosition(titleX, 200.f); // Posición vertical más arriba
     
-
-
-
     // Opciones del menú
     options = {"Jugar", "Controles", "Salir"};
     coords = {{860.f, 350.f}, {860.f, 475.f}, {860.f, 600.f}};
@@ -79,10 +73,8 @@ void Menu::set_values()
     }
     texts[0].setOutlineThickness(4); // Resaltar "Jugar" inicialmente
 
-    // Botón de cerrar
-    winclose.setSize(sf::Vector2f(23.f, 26.f));
-    winclose.setPosition(1178.f, 39.f);
-    winclose.setFillColor(sf::Color::Transparent);
+   
+    
 }
 
 // Mostrar ventana de controles
@@ -90,20 +82,13 @@ void Menu::showControls()
 {
     if (!controlsWindow.isOpen())
     {
-        controlsWindow.create(sf::VideoMode::getDesktopMode(), "Controles", sf::Style::Fullscreen);
-
+        controlsWindow.create(sf::VideoMode(1920, 1080), "Controles Espíritu Samurai II",sf::Style::Fullscreen);
         // Fondo de la ventana de controles
         if (!imagecontrolBackground.loadFromFile("../assets/images/controles.jpeg"))
             throw std::runtime_error("Error cargando la imagen de controles");
 
         controlsBackground.setTexture(imagecontrolBackground);
 
-        // Botón de "Volver"
-        backButton.setFont(font);
-        backButton.setString("Volver");
-        backButton.setCharacterSize(30);
-        backButton.setPosition(350.f, 500.f);
-        backButton.setOutlineColor(sf::Color::Black);
     }
 
     // Mostrar ventana de controles
@@ -117,20 +102,15 @@ void Menu::showControls()
                 controlsWindow.close();
             }
 
-            if (event.type == sf::Event::MouseButtonPressed)
+            if (event.type == sf::Event::KeyPressed)
             {
-                // Detectar clic en el botón "Volver"
-                if (backButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
-                {
                     controlsWindow.close();
                     state = GameState::MainMenu;  // Volver al menú principal
-                }
             }
         }
 
         controlsWindow.clear();
         controlsWindow.draw(controlsBackground);
-        controlsWindow.draw(backButton);
         controlsWindow.display();
     }
 }
@@ -146,8 +126,7 @@ void Menu::loop_events()
             window.close();
         }
 
-        pos_mouse = sf::Mouse::getPosition(window);
-        mouse_coord = window.mapPixelToCoords(pos_mouse);
+        
 
         // Navegar con teclas de dirección
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !pressed)
@@ -188,7 +167,6 @@ void Menu::loop_events()
             else if (pos == 1) // Controles
             {
                 state = GameState::Controls;  // Cambiar estado a Controles
-                
             }
             else if (pos == 2) // Salir
             {
@@ -226,10 +204,10 @@ void Menu::draw_all()
 }
 
 // Ejecuta el menú
-void Menu::run_menu(Juego& juego)
+void Menu::run_menu()
 {
     bool isMenuMusicPlaying = false;
-    while (window.isOpen()) // Solo continuar si la ventana está abierta
+    while (window.isOpen()) // Mientras la ventana del menú esté abierta
     {
         if (!isMenuMusicPlaying)
         {
@@ -243,19 +221,11 @@ void Menu::run_menu(Juego& juego)
         {
             showControls();
         }
-        else if (state == GameState::Game)
+        else if (state == GameState::Game || state == GameState::Exit)
         {
-            // Lógica para iniciar el juego (esto depende de tu implementación)
-
-           
-            juego.ejecutar();
-            
-            break;  // Salir del ciclo del menú para ejecutar el juego
-        }
-        else if (state == GameState::Exit)
-        {
-            window.close();
-            break;  // Salir del ciclo del menú
+            SonidosM.PauseMenuSound();
+            window.close(); // Cierra la ventana del menú
+            break;
         }
     }
 }

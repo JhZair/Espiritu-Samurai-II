@@ -3,10 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <vector>
-#include "Juego.h"
 #include "Sonido.h"
-class Juego;
+#include <vector>
 
 class Menu
 {
@@ -19,7 +17,7 @@ public:
         Exit
     };
 
-    friend class Juego;  // Permite que la clase Juego acceda a los miembros privados de Menu.
+    
 
     // Constructor y Destructor
     Menu();
@@ -27,30 +25,31 @@ public:
 
     // Métodos públicos
     void set_values();           
-    void run_menu(Juego& juego);             
+    void run_menu();             
     void loop_events();          
     void draw_all();             
     void showControls();         
 
-    // Método de acceso para obtener el estado del juego
+    // Método de acceso para obtener el estado del juego o asignar un estado nuevo
     GameState get_state() const { return state; }
+    GameState set_state(GameState nuevoEstado) { return state=nuevoEstado;}
 
 private:
     // Miembros privados
     Sounds SonidosM;
+
     sf::RenderWindow window;                
     sf::RenderWindow controlsWindow;        
     sf::Font font;                          
     sf::Texture image;                      
     sf::Texture imagecontrolBackground;     
     sf::Sprite bg;                          
-    sf::Sprite controlsBackground;
-    sf::Text backButton;      
-    sf::RectangleShape winclose; 
-
+    sf::Sprite controlsBackground;      
+    
+        
     size_t currentFrame;
     sf::Clock animationClock;
-    std::vector<sf::Texture> backgroundTextures;
+    std::vector<sf::Texture> backgroundTextures;       
 
     sf::Text titulotext;
     std::vector<sf::Text> texts;            
@@ -59,15 +58,8 @@ private:
     std::vector<int> sizes;                 
     int pos;                                
     bool pressed;                           
-    bool theselect;                         
-    bool isPlaying;                         
-    bool seleccionJugar;                    
-
-    sf::Vector2i pos_mouse;                 
-    sf::Vector2f mouse_coord;               
-
-    // Método privado
-    bool getSeleccionJugar() const;
+    bool theselect;                                                                    
+             
 
     GameState state;
 };
