@@ -1,4 +1,4 @@
-# Jugo
+# Instalación del proyecto
 
 #Para instalar sfml:#
 1. https://www.msys2.org/
